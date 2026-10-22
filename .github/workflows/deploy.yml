@@ -25,8 +25,8 @@ jobs:
         id: pages
       - run: npm ci
       - run: npm test
-      - name: Refresh approved YouTube videos
-        run: node scripts/youtube.mjs refresh
+      - name: Collect and publish YouTube videos
+        run: node scripts/youtube.mjs collect
         env:
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
       - run: npm run build

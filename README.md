@@ -49,27 +49,19 @@ npm run preview
 
 ## 콘텐츠 및 출처
 
-### 오늘의 진돗개 — YouTube 영상 운영
+### 오늘의 진돗개 — 자동 영상 목록
 
-사이트에는 **직접 승인한 영상만** 표시됩니다. 검색 결과는 자동 승인하지 않습니다.
+별도 승인 없이 YouTube 검색으로 수집한 진돗개 관련 영상을 메인에 표시합니다. 한국어·영어·일본어로 검색하고 중복을 제거한 뒤 공개·임베드 가능한 일반 영상만 포함합니다. 삭제/비공개/지역·연령 제한/라이브 영상은 제외합니다. 검색 결과의 내용이나 품종을 직접 검증한 목록은 아닙니다.
 
-1. 저장소 Actions Secret에 `YOUTUBE_API_KEY`를 등록합니다. Google Cloud의 YouTube Data API v3를 활성화하고 해당 API만 허용한 키를 사용합니다. 키를 소스나 `PUBLIC_` 환경변수에 넣지 마세요.
-2. [Collect Jindo video candidates](https://github.com/yeaseul7/madeinkorea/actions/workflows/collect-videos.yml) → **Run workflow**. 매일 09:17 KST에도 실행됩니다.
-3. 성공한 실행 하단 **Artifacts → jindo-video-candidates**를 내려받고 `review.html`을 엽니다. 각 YouTube 원본을 직접 보고 진돗개 관련성, 내용, 채널, 자막을 확인합니다. 한국어·영어·일본어 검색은 후보 탐색용이며 콘텐츠 품질이나 품종을 자동 판정하지 않습니다.
-4. [Review a Jindo video](https://github.com/yeaseul7/madeinkorea/actions/workflows/review-video.yml) → **Run workflow**. `action=approve`, 검토한 영상 URL/ID, 게시일(`YYYY-MM-DD`, 한국 시간)을 입력합니다. 게시일을 비우면 오늘입니다. 저장소 쓰기 권한이 있는 운영자만 실행할 수 있습니다.
-5. 승인 목록이 커밋되고 배포가 자동 시작됩니다. 미래 날짜의 영상은 해당 날짜 이후 첫 배포부터 표시됩니다. 날짜별 한 편만 등록되며 날짜 충돌 시 실패합니다. 수정하려면 기존 영상을 `remove`로 해제한 뒤 승인하세요.
-6. 승인 해제는 같은 워크플로에서 `action=remove`와 영상 URL/ID를 입력합니다. 배포가 완료되면 사이트에서 제거됩니다.
-
-매일 09:37 KST에 승인 영상을 재검증하고 사이트를 배포합니다. 예약 실행은 GitHub 사정에 따라 늦어질 수 있고, 공개 저장소가 장기간 비활성 상태이면 중지될 수 있습니다. Actions에서 실행 상태를 확인하세요. 당일 영상이 없으면 가장 최근의 재생 가능한 승인 영상을 유지합니다. 아직 승인 영상이 없으면 준비 문구만 표시합니다.
-
-- `src/data/featured-videos.json`: 승인한 ID와 게시일만 저장. API에서 받은 제목·채널은 Git에 저장하지 않습니다.
-- `.reports/`: 후보 JSON과 HTML. Git 무시, Actions Artifact 보관 7일. 내려받은 후보 파일도 검토 후 삭제하세요.
-- `.generated/videos.json`: 매 배포마다 갱신되는 제목·채널. Git 무시. 일반 로컬 빌드는 파일이 없어도 동작합니다.
-- 삭제/비공개/임베드 불가/지역·연령 제한/라이브 영상은 제외합니다. API 오류가 나면 해당 배포에서 영상을 숨기고 Actions 경고를 남깁니다.
-- 메타데이터 유효기간은 7일입니다. 빌드 및 브라우저에서 만료를 확인합니다. 배포가 멈추더라도 재생하지 않으며, 정적 배포 파일의 갱신·삭제를 위해 운영자는 예약 배포 상태를 유지해야 합니다.
-- 제목·음성·자막은 원본에서 제공하는 언어입니다. 주변 UI는 한국어·영어·일본어를 지원합니다.
-- 방문자는 YouTube Data API를 호출하지 않습니다. 썸네일은 YouTube에서 로드하고 재생 클릭 시에만 `youtube-nocookie.com` 플레이어를 만듭니다. 지역/계정별 재생 제한은 YouTube에서 최종 결정하며 원본 링크도 제공합니다.
-- 검증: `npm test`, `npm run build`. 로컬 API 테스트는 별도로 환경에 주입한 키로 `npm run videos:collect`, `npm run videos:refresh`를 실행합니다. `.env`는 자동으로 읽지 않습니다.
+- 배포할 때마다 자동 수집하며 매일 09:37 KST에도 갱신·배포합니다. GitHub 예약 실행은 지연되거나 장기 비활성 시 중지될 수 있습니다.
+- 수동 갱신: [Deploy to GitHub Pages](https://github.com/yeaseul7/madeinkorea/actions/workflows/deploy.yml) → Run workflow.
+- `YOUTUBE_API_KEY`는 GitHub Actions Secret에만 설정합니다. 방문자의 브라우저에서는 Data API를 호출하지 않습니다.
+- 로컬은 `npm run dev` 실행 시 배포된 공개 JSON을 동기화합니다. 이미 서버가 실행 중이면 `npm run videos:sync` 후 새로고침하세요. 로컬에 API 키를 넣을 필요가 없습니다.
+- `.generated/videos.json`과 `public/data/jindo-videos.json`은 자동 생성되며 Git에 저장하지 않습니다. 제목·채널 등 API 메타데이터가 Git 이력에 남지 않도록 합니다.
+- API 수집 실패 시 이번 배포의 목록을 비우고 Actions 경고를 남깁니다. 로컬 동기화 실패 시 7일 이내의 로컬 자료만 사용합니다. 오래된 목록은 빌드·브라우저에서 숨기므로 배포 스케줄을 유지하세요.
+- 첫 6개를 표시하고 ‘영상 더 보기’로 6개씩 펼칩니다. 제목과 음성·자막은 원본 언어이며 UI는 3개 언어를 지원합니다.
+- 썸네일은 YouTube에서 로드하며 클릭 시에만 플레이어를 연결합니다. 다른 영상을 재생하면 이전 재생은 중단합니다. 지역/계정별 재생 여부는 YouTube에서 최종 결정합니다.
+- 검증: `npm test`, `npm run build`. API 키가 주입된 환경에서는 `npm run videos:collect`로 수집할 수 있습니다.
 
 공식 문서: [검색 API](https://developers.google.com/youtube/data/reference/rest/v3/search/list), [영상 상태 API](https://developers.google.com/youtube/data/reference/rest/v3/videos/list), [YouTube 개발자 정책](https://developers.google.com/youtube/terms/developer-policies).
 
