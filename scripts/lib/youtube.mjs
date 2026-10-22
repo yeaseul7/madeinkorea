@@ -1,4 +1,5 @@
 export const ID_PATTERN = /^[A-Za-z0-9_-]{11}$/;
+export const MAX_VIDEOS = 5;
 export const MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
 
 export function isPlayable(item) {
@@ -45,14 +46,14 @@ export function selectVideos(cache, now = new Date()) {
     if (!ID_PATTERN.test(video?.id || '') || typeof video.title !== 'string' || typeof video.channel !== 'string' || seen.has(video.id)) return false;
     seen.add(video.id);
     return true;
-  }).slice(0, 30).map(video => ({ id: video.id, title: video.title, channel: video.channel, expiresAt: new Date(fetched + MAX_AGE_MS).toISOString() }));
+  }).slice(0, MAX_VIDEOS).map(video => ({ id: video.id, title: video.title, channel: video.channel, expiresAt: new Date(fetched + MAX_AGE_MS).toISOString() }));
 }
 
 export async function collectVideos(options) {
   const ids = new Set();
   for (const [q, relevanceLanguage] of [['진돗개 일상', 'ko'], ['Korean Jindo dog', 'en'], ['珍島犬', 'ja']]) {
-    const items = await youtube('search', { part: 'snippet', type: 'video', q, relevanceLanguage, maxResults: '10', order: 'date', safeSearch: 'strict', videoEmbeddable: 'true', videoSyndicated: 'true' }, options);
+    const items = await youtube('search', { part: 'snippet', type: 'video', q, relevanceLanguage, maxResults: String(MAX_VIDEOS), order: 'date', safeSearch: 'strict', videoEmbeddable: 'true', videoSyndicated: 'true' }, options);
     for (const item of items) if (ID_PATTERN.test(item.id?.videoId || '')) ids.add(item.id.videoId);
   }
-  return (await videoDetails([...ids], options)).filter(isPlayable).map(metadata);
+  return (await videoDetails([...ids], options)).filter(isPlayable).slice(0, MAX_VIDEOS).map(metadata);
 }
