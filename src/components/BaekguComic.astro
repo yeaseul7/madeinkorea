@@ -1,0 +1,121 @@
+---
+import type { Language } from '../data/content';
+interface Props { lang: Language; base: string; }
+const { lang, base } = Astro.props;
+const copy = {
+  ko: { title: '돌아온 백구', intro: '사진 속 동상에는 어떤 이야기가 담겨 있을까요? 진진이가 들려주는 만화로 만나보세요.', open: '만화 읽기', close: '만화 접기', label: '돌아온 백구 만화', language: '한국어 · 총 3화', episodes: ['백구가 떠난 날', '집으로 돌아가는 길', '한 마리의 귀향, 진도의 상징으로'], episode: '화', original: '크게 보기', top: '만화 처음으로' },
+  en: { title: 'The Dog Who Came Home', intro: 'What is the story behind the statue? Discover Baekgu’s journey in a comic told by Jinjin.', open: 'Read the comic', close: 'Close the comic', label: 'The Dog Who Came Home comic', language: 'English · 3 episodes', episodes: ['The day Baekgu left', 'The journey home', 'A homecoming becomes a symbol'], episode: 'Episode', original: 'View full-size image', top: 'Back to the comic' },
+  ja: { title: '帰ってきた白狗', intro: '写真の像には、どんな物語があるのでしょうか。ジンジンが語る漫画で、白狗の旅をたどります。', open: '漫画を読む', close: '漫画を閉じる', label: '帰ってきた白狗の漫画', language: '日本語・全3話', episodes: ['白狗が旅立った日', '家へ帰る道', '帰郷から珍島の象徴へ'], episode: '話', original: '画像を大きく見る', top: '漫画の先頭へ' },
+}[lang];
+const controls = { ko: { prev: '이전 화', next: '다음 화' }, en: { prev: 'Previous episode', next: 'Next episode' }, ja: { prev: '前の話', next: '次の話' } }[lang];
+const episodeLabel = (n: number) => lang === 'en' ? `Episode ${n}` : `${n}${copy.episode}`;
+---
+<div class="baekgu-comic" id="baekgu-comic" data-comic-reader>
+  <section class="comic-reader" aria-label={copy.label}>
+
+    <div class="comic-reader-body" aria-label={copy.label}>
+      <div class="comic-pages" id="comic-pages">{copy.episodes.map((title,i) => <figure id={`comic-page-${i+1}`}><figcaption><span>{episodeLabel(i+1)} / {title}</span><a href={`${base}/comics/returned-baekgu/${lang}/${String(i+1).padStart(2,'0')}.png`} target="_blank" rel="noreferrer">{copy.original} ↗</a></figcaption><img src={`${base}/comics/returned-baekgu/${lang}/${String(i+1).padStart(2,'0')}.png`} alt={`${copy.title} — ${episodeLabel(i+1)}: ${title}`} width="1055" height="1491" loading="lazy" decoding="async" /></figure>)}</div>
+      <div class="comic-pagination" hidden>
+        <button type="button" data-comic-prev aria-label={controls.prev} aria-controls="comic-pages"><span aria-hidden="true">←</span><span class="visually-hidden">{controls.prev}</span></button>
+        <span class="comic-counter" role="status" aria-live="polite" aria-atomic="true">1 / 3</span>
+        <button type="button" data-comic-next aria-label={controls.next} aria-controls="comic-pages"><span class="visually-hidden">{controls.next}</span><span aria-hidden="true">→</span></button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-comic-reader]').forEach(reader => {
+    const pages = Array.from(reader.querySelectorAll<HTMLElement>('.comic-pages figure'));
+    const links = Array.from(reader.querySelectorAll<HTMLAnchorElement>('.comic-contents a'));
+    const prev = reader.querySelector<HTMLButtonElement>('[data-comic-prev]');
+    const next = reader.querySelector<HTMLButtonElement>('[data-comic-next]');
+    const counter = reader.querySelector<HTMLElement>('.comic-counter');
+    const pagination = reader.querySelector<HTMLElement>('.comic-pagination');
+    if (!prev || !next || !counter || !pagination || !pages.length) return;
+    let current = 0;
+    let pageAnimation: Animation | undefined;
+    let transitionId = 0;
+    const pageMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    pageMotion.addEventListener('change', event => { if (event.matches) pageAnimation?.cancel(); });
+    const show = (index: number, reposition = false) => {
+      const previous = current;
+      current = Math.max(0, Math.min(pages.length - 1, index));
+      const id = ++transitionId;
+      pageAnimation?.cancel();
+      pages.forEach((page, i) => { page.hidden = i !== current; });
+      links.forEach((link, i) => {
+        if (i === current) link.setAttribute('aria-current', 'step');
+        else link.removeAttribute('aria-current');
+      });
+      prev.disabled = current === 0;
+      next.disabled = current === pages.length - 1;
+      counter.textContent = `${current + 1} / ${pages.length}`;
+      const activePage = pages[current];
+      const image = activePage.querySelector<HTMLImageElement>('img');
+      const upcomingImage = pages[current + 1]?.querySelector<HTMLImageElement>('img');
+      if (upcomingImage) upcomingImage.loading = 'eager';
+      if (reposition && current !== previous && !pageMotion.matches) {
+        const direction = current > previous ? 1 : -1;
+        const enter = () => {
+          if (id !== transitionId || activePage.hidden || pageMotion.matches) return;
+          pageAnimation = activePage.animate([
+            { opacity: 0, transform: `translateX(${direction * 26}px)` },
+            { opacity: 1, transform: 'translateX(0)' }
+          ], { duration: 520, easing: 'cubic-bezier(.22,1,.36,1)' });
+        };
+        if (image && !image.complete) {
+          image.loading = 'eager';
+          image.decode().then(enter).catch(() => {});
+        } else enter();
+      }
+      const pageArea = reader.querySelector<HTMLElement>('.comic-pages');
+      if (reposition && pageArea && pageArea.getBoundingClientRect().top < 0) {
+        pageArea.scrollIntoView({ block: 'start', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+      }
+    };
+    prev.addEventListener('click', () => show(current - 1, true));
+    next.addEventListener('click', () => show(current + 1, true));
+    links.forEach((link, i) => link.addEventListener('click', event => {
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      event.preventDefault(); show(i, true);
+    }));
+    reader.addEventListener('keydown', event => {
+      if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+        event.preventDefault(); show(current + (event.key === 'ArrowRight' ? 1 : -1), true);
+      }
+    });
+    const fromHash = pages.findIndex(page => `#${page.id}` === window.location.hash);
+    show(fromHash < 0 ? 0 : fromHash);
+    pagination.hidden = false;
+  });
+</script>
+
+<script>
+  const showcase = document.querySelector<HTMLElement>('.comic-showcase');
+  const stage = showcase?.querySelector<HTMLElement>('.comic-stage');
+  const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
+  if (showcase && stage && 'IntersectionObserver' in window) {
+    let frame = 0;
+    let watching = false;
+    const paint = () => {
+      frame = 0;
+      if (preference.matches) { stage.style.removeProperty('transform'); stage.style.removeProperty('opacity'); return; }
+      const top = showcase.getBoundingClientRect().top;
+      const progress = Math.max(0, Math.min(1, (window.innerHeight - top) / (window.innerHeight * .72)));
+      const eased = 1 - Math.pow(1 - progress, 3);
+      stage.style.transform = `translateY(${(1 - eased) * 64}px) scale(${.97 + eased * .03})`;
+      stage.style.opacity = String(.35 + eased * .65);
+    };
+    const schedule = () => { if (watching && !frame) frame = requestAnimationFrame(paint); };
+    const observer = new IntersectionObserver(entries => {
+      watching = entries[0].isIntersecting;
+      if (watching) schedule();
+    }, { rootMargin: '100px 0px' });
+    observer.observe(showcase);
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule, { passive: true });
+    preference.addEventListener('change', () => { if (frame) cancelAnimationFrame(frame); frame = 0; paint(); });
+  }
+</script>

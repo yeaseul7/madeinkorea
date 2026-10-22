@@ -1,0 +1,182 @@
+---
+import BaekguComic from './BaekguComic.astro';
+import { content, languages, type Language } from '../data/content';
+import '../styles/global.css';
+import { history, historySources } from '../data/history';
+import { chapters, noticeUrl } from '../data/history-chapters';
+interface Props { lang: Language; historyPage?: boolean; }
+const { lang, historyPage = false } = Astro.props;
+const t = content[lang];
+const h = history[lang];
+const c = chapters[lang];
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const home = `${base}/${lang}/`;
+const ui = {
+  ko: { title: ['진도개에 대해', '들어보셨나요?'], intro: '한국의 진도에서 시작된 이야기를 만나보세요.', button: '진도개 알아보기', photoTitle: '돌아온 백구', photoCaption: '돌아온 백구상', photoAlt: '들판을 배경으로 백구와 사람이 마주 보는 돌아온 백구상', calligraphyAlt: '진돗개 붓글씨', place: '전라남도 진도', country: '대한민국 진도', mapJindo: '진도', mapKorea: '대한민국', community: '커뮤니티', adoption: '입양', prepare: '입양 준비 확인하기', mapCredit: '지도 데이터 출처', akc: 'American Kennel Club — 진돗개 소개', ukc: 'United Kennel Club — 진돗개 품종 표준' },
+  en: { title: ['Have you heard', 'of the Jindo?'], intro: 'Discover a story that began in Jindo, Korea.', button: 'Get to know the Jindo', photoTitle: 'The Return of Baekgu', photoCaption: 'Returned Baekgu statue', photoAlt: 'The Returned Baekgu statue, showing a dog and a person facing each other in a rural landscape', calligraphyAlt: 'Jindo written in Korean brush calligraphy', place: 'Jindo, Jeollanam-do', country: 'Jindo, South Korea', mapJindo: 'JINDO', mapKorea: 'KOREA', community: 'Community', adoption: 'Adoption', prepare: 'Prepare for adoption', mapCredit: 'Map data source', akc: 'American Kennel Club — Korean Jindo Dog', ukc: 'United Kennel Club — Jindo breed standard' },
+  ja: { title: ['珍島犬を', '知っていますか？'], intro: '韓国の珍島から始まった物語に出会ってみませんか。', button: '珍島犬を知る', photoTitle: '帰ってきた白狗', photoCaption: '帰ってきた白狗の像', photoAlt: '田園を背景に白い犬と人が向き合う「帰ってきた白狗」の像', calligraphyAlt: '韓国語で「珍島犬」と書かれた筆文字', place: '全羅南道・珍島', country: '韓国・珍島', mapJindo: '珍島', mapKorea: '韓国', community: 'コミュニティ', adoption: '譲渡', prepare: '迎える準備を確認する', mapCredit: '地図データの出典', akc: 'American Kennel Club — 珍島犬の紹介', ukc: 'United Kennel Club — 珍島犬の犬種標準' },
+}[lang];
+const sections = ['story', 'character', 'community', 'adoption-listings'];
+const historyUrl = `${home}history/`;
+const pagePath = historyPage ? historyUrl : home;
+const pageTitle = historyPage ? t.nav[0] : t.title;
+const canonical = new URL(pagePath, Astro.site);
+---
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle} — Jindo of Korea</title><meta name="description" content={t.description} />
+    <meta name="theme-color" content="#f4f0e7" /><link rel="icon" href={`${base}/favicon-64.png`} type="image/png" sizes="64x64" /><link rel="apple-touch-icon" href={`${base}/apple-touch-icon.png`} />
+    <link rel="canonical" href={canonical} />
+    {Object.keys(languages).map(code => <link rel="alternate" hreflang={code} href={new URL(`${base}/${code}/${historyPage ? "history/" : ""}`, Astro.site)} />)}
+    <link rel="alternate" hreflang="x-default" href={new URL(`${base}/en/${historyPage ? "history/" : ""}`, Astro.site)} />
+    <meta property="og:title" content={`${pageTitle} — Jindo of Korea`} /><meta property="og:description" content={t.description} />
+    <meta property="og:type" content="website" /><meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL(`${base}/images/returned-baekgu.png`, Astro.site)} />
+  </head>
+  <body id="top" class:list={{ "history-page": historyPage }}>
+    <a class="skip" href="#main">{t.skip}</a>
+    <header class="header wrap">
+      <a class="brand header-wordmark" href={home} aria-label="Jindo of Korea"><img class="brand-symbol" src={`${base}/images/jinjin-symbol-128.webp`} alt="" width="48" height="48" /><span class="brand-title">JINDO OF KOREA</span></a>
+      <nav class="desktop-nav" aria-label={t.menu}>{t.nav.map((label,i) => <a href={i === 0 ? historyUrl : `${home}#${sections[i]}`} aria-current={i === 0 && historyPage ? "page" : undefined}>{label}</a>)}</nav>
+      <details class="language"><summary aria-label={t.language}><span aria-hidden="true">◎</span> {languages[lang]} <span aria-hidden="true">⌄</span></summary><div class="language-list">{Object.entries(languages).map(([code, label]) => <a href={`${base}/${code}/${historyPage ? "history/" : ""}`} lang={code} hreflang={code} aria-current={code === lang ? 'page' : undefined}>{label}<span>{code === lang ? '✓' : ''}</span></a>)}</div></details>
+    </header>
+    <main id="main">
+      {!historyPage && <>
+      <div class="hero-scene coastal-hero">
+
+        <section class="hero wrap" aria-labelledby="hero-title">
+          <div class="hero-copy"><p class="hero-hangul"><img src={`${base}/images/jindo-calligraphy.png`} alt={ui.calligraphyAlt} width="1774" height="887" fetchpriority="high" /></p><h1 id="hero-title">{ui.title[0]}<br />{ui.title[1]}</h1><p class="hero-intro">{ui.intro}</p><div class="hero-actions"><a class="button" href={historyUrl}>{ui.button}<span aria-hidden="true">↓</span></a></div></div>
+          <div class="island-scene">
+            <figure class="document-photo"><div class="document-index"><span>01 / JINDO</span><span>{ui.photoTitle}</span></div><img src={`${base}/images/returned-baekgu.png`} alt={ui.photoAlt} width="600" height="400" fetchpriority="high" /><figcaption><span>{ui.photoCaption}</span><span>{ui.country}</span></figcaption></figure>
+          </div>
+          <a class="hero-scroll-cue" href="#baekgu-comic" aria-label={lang === 'ko' ? '아래로 내려 만화 보기' : lang === 'ja' ? '下へスクロールして漫画を見る' : 'Scroll down to read the comic'}><span>{lang === 'ko' ? '이야기 속으로' : lang === 'ja' ? '物語へ' : 'Discover the story'}</span><span aria-hidden="true">↓</span></a>
+        </section>
+      </div>
+      <section class="comic-showcase" aria-label={ui.photoTitle}><div class="wrap comic-stage"><BaekguComic lang={lang} base={base} /></div></section>
+      </>}
+      {historyPage && <>
+      <h1 class="visually-hidden">{t.nav[0]}</h1>
+      <section id="story" class="section wrap history-section" aria-label={t.nav[0]}>
+        <article id="chapter-island" class="archive-chapter">
+          <header><p class="eyebrow">CHAPTER 01 / {c.labels[0]}</p><h3>{c.island.title}</h3><p class="chapter-lead">{c.island.lead}</p></header>
+          <div class="chapter-grid">
+            <figure class="archive-map"><span class="archive-coordinate">JINDO / JEOLLANAM-DO</span><img src={`${base}/images/jindo-world-${lang}.svg`} width="800" height="450" alt={c.island.caption} loading="lazy" /><figcaption><strong>{c.island.caption}</strong><small>{c.island.mapNote}</small></figcaption></figure>
+            <div class="chapter-body">{c.island.paragraphs.map(p => <p>{p}</p>)}<div class="origin-stories">{c.island.stories.map(story => <section><h4>{story.title}</h4><p>{story.body}</p></section>)}</div>{c.island.note && <p class="chapter-note">{c.island.note}</p>}<a class="chapter-source" href={c.island.sourceUrl} target="_blank" rel="noreferrer"><span>{c.island.source}</span><span aria-hidden="true">↗</span></a></div>
+          </div>
+
+        </article>
+        <article id="chapter-record" class="archive-chapter">
+          <header class="record-header"><p class="eyebrow"><span>CHAPTER 02</span><span>{c.labels[1]}</span></p><h3>{c.record.title}</h3><p class="chapter-lead">{c.record.lead}</p></header>
+          <div class="record-layout">
+            <aside class="record-references"><h4>{c.record.referencesTitle}</h4><ul>{c.record.references.map((reference,i) => <li><a href={i === 0 ? historySources.encyclopedia : historySources.archives} target="_blank" rel="noreferrer"><span>{reference}</span><span aria-hidden="true">↗</span></a></li>)}</ul></aside>
+            <div class="chapter-body record-essay">{c.record.paragraphs.map(p => <p>{p}</p>)}</div>
+          </div>
+        </article>
+        <article id="chapter-preservation" class="archive-chapter">
+          <header><p class="eyebrow">CHAPTER 03 / {c.labels[2]}</p><h3>{c.preservation.title}</h3><p class="chapter-lead">{c.preservation.lead}</p></header>
+          <div class="chapter-grid preservation-grid">
+            <figure class="gazette-record"><a href={noticeUrl} target="_blank" rel="noreferrer" aria-label={c.original}><img src={`${base}/images/jindo-gazette-1958.jpg`} alt={c.preservation.imageAlt} width="1648" height="2336" loading="lazy" /></a><figcaption><strong>{c.preservation.caption}</strong><small>{c.preservation.imageNote}</small><a href={noticeUrl} target="_blank" rel="noreferrer">{c.original} ↗</a></figcaption></figure>
+            <div class="preservation-records">{c.preservation.records.map(([date,title,body],i) => <section id={`record-${i+2}`}><p class="record-date">{date}</p><h4>{title}</h4>{c.preservation.subtitles[i] && <p class="preservation-subtitle">{c.preservation.subtitles[i]}</p>}{body.split("\n\n").map(paragraph => <p>{paragraph}</p>)}{i === 0 && <aside class="notice-summary"><strong>{c.preservation.recordLabel}</strong><ul>{c.preservation.recordDetails.map(detail => <li>{detail}</li>)}</ul></aside>}{i === 1 && <a class="chapter-source" href={historySources.heritage} target="_blank" rel="noreferrer">{c.preservation.heritageLink} ↗</a>}{i === 2 && <a class="chapter-source" href={historySources.law} target="_blank" rel="noreferrer">{c.preservation.lawLink} ↗</a>}{i === 3 && <a class="chapter-source" href={historySources.archives} target="_blank" rel="noreferrer">{c.preservation.archiveLink} ↗</a>}</section>)}</div>
+          </div>
+        </article>
+        <details class="history-sources"><summary>{h.sourcesTitle}</summary><ul>{Object.values(historySources).map((url,i) => <li><a href={url} target="_blank" rel="noreferrer">{h.sourceNames[i]} ↗</a></li>)}</ul></details>
+      </section>
+      </>}
+      {!historyPage && <>
+      <section id="character" class="section character"><div class="wrap"><div class="section-heading"><div><p class="eyebrow">{t.traitsLabel}</p><h2>{t.traitsTitle}</h2></div><p>{t.traitsIntro}</p></div><div class="trait-grid">{t.traits.map(([title,body],i) => <article class="trait"><span class="card-number">0{i+1}</span><h3>{title}</h3><p>{body}</p></article>)}</div></div></section>
+      <section id="together" class="section wrap living"><div class="section-copy"><p class="eyebrow">{t.lifeLabel}</p><h2>{t.lifeTitle}</h2><p>{t.lifeIntro}</p></div><div class="life-list">{t.life.map(([title,body],i) => <article><span>0{i+1}</span><div><h3>{title}</h3><p>{body}</p></div></article>)}</div></section>
+      <section id="community" class="section wrap community-section"><p class="eyebrow">{ui.community}</p><h2>{t.communityTitle}</h2><p>{t.communityBody}</p></section>
+      <section id="adoption-listings" class="section wrap listings-section"><p class="eyebrow">{ui.adoption}</p><h2>{t.listingsTitle}</h2><p>{t.listingsBody}</p><a class="text-link" href="#adoption">{ui.prepare} ↓</a></section>
+      <section id="adoption" class="adoption section"><div class="wrap"><p class="eyebrow">{t.adoptionLabel}</p><h2>{t.adoptionTitle}</h2><p class="adoption-intro">{t.adoptionIntro}</p><div class="adoption-grid"><div class="checklist" data-ready={t.checked} data-pending={t.unchecked}><div class="check-progress"><span><strong id="check-count">0</strong> / 4 {t.progress}</span><button id="reset-checklist" type="button">{t.reset}</button></div><progress id="preparation-progress" max="4" value="0" aria-label={t.progress}></progress>{t.checks.map(label => <label class="check-row"><input type="checkbox" name="preparation" /><span>{label}</span></label>)}<p id="check-feedback" aria-live="polite">{t.unchecked}</p></div><aside class="rescue"><span class="rescue-icon" aria-hidden="true">↗</span><h3>{t.rescueTitle}</h3><p>{t.rescueBody}</p><a class="button light" href="https://www.koreank9rescue.org/adopt/" target="_blank" rel="noreferrer">{t.rescueLink}<span aria-hidden="true">↗</span></a><small>{t.rescueNote}</small></aside></div></div></section>
+      <section class="section wrap faq"><h2>{t.faqTitle}</h2><div>{t.faqs.map(([q,a]) => <details><summary>{q}<span aria-hidden="true">+</span></summary><p>{a}</p></details>)}</div></section>
+      </>}
+    </main>
+    <footer class="wrap"><div class="footer-main"><a class="brand" href={home}><img class="brand-symbol" src={`${base}/images/jinjin-symbol-128.webp`} alt="" width="48" height="48" /><span class="brand-title">JINDO OF KOREA</span></a><p>{t.footer}</p><a class="text-link" href="#top">{t.top} ↑</a></div><div class="footer-bottom"><p>{t.independent}</p><details class="credits" id="photo-credit"><summary>{t.sources}</summary><div><p>{ui.mapCredit}: <a href="https://github.com/nvkelso/natural-earth-vector/blob/master/geojson/ne_110m_land.geojson">Natural Earth / 1:110m Land</a></p><p><a href="https://www.akc.org/dog-breeds/korean-jindo-dog/">{ui.akc}</a></p><p><a href="https://www.ukcdogs.com/breed-standards/jindo">{ui.ukc}</a></p></div></details><span>© {new Date().getFullYear()} Jindo of Korea</span></div></footer>
+    <script>
+      const heroPanel = document.querySelector<HTMLElement>('.coastal-hero');
+      const heroContent = heroPanel?.querySelector<HTMLElement>('.hero');
+      const siteHeader = document.querySelector<HTMLElement>('.header');
+      if (heroPanel && heroContent && siteHeader) {
+        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+        let heroFrame = 0;
+        let heroVisible = true;
+        const updateHeaderSize = () => {
+          heroPanel.style.setProperty('--site-header-height', `${siteHeader.getBoundingClientRect().height}px`);
+        };
+        const updateHero = () => {
+          heroFrame = 0;
+          if (reducedMotion.matches) {
+            heroContent.style.removeProperty('transform');
+            heroContent.style.removeProperty('opacity');
+            return;
+          }
+          const rect = heroPanel.getBoundingClientRect();
+          const progress = Math.max(0, Math.min(1, -rect.top / Math.max(1, rect.height)));
+          heroContent.style.transform = `translateY(${-progress * 56}px)`;
+          heroContent.style.opacity = String(1 - progress * .55);
+        };
+        const requestHeroUpdate = () => {
+          if (heroVisible && !heroFrame) heroFrame = requestAnimationFrame(updateHero);
+        };
+        updateHeaderSize();
+        if ('ResizeObserver' in window) new ResizeObserver(updateHeaderSize).observe(siteHeader);
+        if ('IntersectionObserver' in window) new IntersectionObserver(entries => {
+          heroVisible = entries[0].isIntersecting;
+          if (heroVisible) requestHeroUpdate();
+        }).observe(heroPanel);
+        window.addEventListener('scroll', requestHeroUpdate, { passive: true });
+        window.addEventListener('resize', () => { updateHeaderSize(); requestHeroUpdate(); }, { passive: true });
+        reducedMotion.addEventListener('change', updateHero);
+        updateHero();
+      }
+      // IntersectionObserver triggers CSS entrances once; content stays readable without JS.
+      const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
+      if ('IntersectionObserver' in window && !motionPreference.matches) {
+        const targets = document.querySelectorAll<HTMLElement>(
+          '.section-copy, .section-heading, .trait, .life-list > article, .community-section, .listings-section, .adoption .wrap > h2, .adoption-intro, .adoption-grid > *, .faq > *, .archive-chapter > header, .chapter-grid > figure, .chapter-grid > .chapter-body, .record-layout > *, .origin-stories > section, .preservation-records > section'
+        );
+        const observer = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            observer.unobserve(entry.target);
+            if (!motionPreference.matches) entry.target.classList.add('motion-enter');
+          });
+        }, { threshold: 0, rootMargin: '0px 0px -48px 0px' });
+        targets.forEach(target => {
+          if (target.matches('.trait, .life-list > article')) {
+            const siblings = Array.from(target.parentElement?.children || []);
+            target.style.setProperty('--motion-delay', `${siblings.indexOf(target) * 85}ms`);
+          }
+          if (target.matches('figure')) target.classList.add('motion-image');
+          if (target.getBoundingClientRect().top >= window.innerHeight) observer.observe(target);
+        });
+        motionPreference.addEventListener('change', event => {
+          if (event.matches) observer.disconnect();
+        });
+      }
+      const checklist = document.querySelector<HTMLElement>('.checklist');
+      const inputs = Array.from(document.querySelectorAll<HTMLInputElement>('input[name="preparation"]'));
+      const update = () => {
+        const count = inputs.filter(input => input.checked).length;
+        const counter = document.querySelector('#check-count');
+        const progress = document.querySelector<HTMLProgressElement>('#preparation-progress');
+        const feedback = document.querySelector('#check-feedback');
+        if (counter) counter.textContent = String(count);
+        if (progress) progress.value = count;
+        if (feedback) feedback.textContent = (count === inputs.length ? checklist?.dataset.ready : checklist?.dataset.pending) || '';
+      };
+      inputs.forEach(input => input.addEventListener('change', update));
+      document.querySelector('#reset-checklist')?.addEventListener('click', () => { inputs.forEach(input => input.checked = false); update(); });
+      update();
+      document.querySelectorAll('a[href="#photo-credit"], a[href="#dog-photo-credit"]').forEach(link => link.addEventListener('click', () => {
+        const credit = document.querySelector<HTMLDetailsElement>('#photo-credit');
+        if (credit) credit.open = true;
+      }));
+      document.querySelectorAll<HTMLAnchorElement>('.language-list a').forEach(link => {
+        link.addEventListener('click', () => { link.hash = window.location.hash; });
+      });
+    </script>
+  </body>
+</html>
