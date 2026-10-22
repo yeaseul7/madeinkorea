@@ -1,0 +1,60 @@
+name: Review a Jindo video
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'approve: 승인 / remove: 승인 해제'
+        type: choice
+        options: [approve, remove]
+        required: true
+      video:
+        description: '검토한 YouTube 영상 URL 또는 ID'
+        type: string
+        required: true
+      publish_on:
+        description: '게시일 YYYY-MM-DD (한국 시간, 비우면 오늘)'
+        type: string
+        required: false
+permissions:
+  contents: write
+  actions: write
+concurrency:
+  group: youtube-review
+  cancel-in-progress: false
+jobs:
+  review:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate and update approval list
+        run: |
+          case "$REVIEW_ACTION" in
+            approve|remove) node scripts/youtube.mjs "$REVIEW_ACTION" ;;
+            *) exit 1 ;;
+          esac
+        env:
+          REVIEW_ACTION: ${{ inputs.action }}
+          VIDEO_INPUT: ${{ inputs.video }}
+          PUBLISH_ON: ${{ inputs.publish_on }}
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+      - name: Save approval decision
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/data/featured-videos.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update reviewed Jindo video schedule'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+      - name: Deploy updated selection
+        run: gh workflow run deploy.yml --ref main
+        env:
+          GH_TOKEN: ${{ github.token }}

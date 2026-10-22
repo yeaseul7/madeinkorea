@@ -3,6 +3,8 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  schedule:
+    - cron: '37 0 * * *'
 permissions:
   contents: read
   pages: write
@@ -22,6 +24,11 @@ jobs:
       - uses: actions/configure-pages@v5
         id: pages
       - run: npm ci
+      - run: npm test
+      - name: Refresh approved YouTube videos
+        run: node scripts/youtube.mjs refresh
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
       - run: npm run build
         env:
           SITE_URL: ${{ steps.pages.outputs.origin }}

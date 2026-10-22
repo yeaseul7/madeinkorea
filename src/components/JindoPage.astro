@@ -1,5 +1,6 @@
 ---
 import BaekguComic from './BaekguComic.astro';
+import TodayJindo from './TodayJindo.astro';
 import { content, languages, type Language } from '../data/content';
 import '../styles/global.css';
 import { history, historySources } from '../data/history';
@@ -55,6 +56,7 @@ const canonical = new URL(pagePath, Astro.site);
         </section>
       </div>
       <section class="comic-showcase" aria-label={ui.photoTitle}><div class="wrap comic-stage"><BaekguComic lang={lang} base={base} /></div></section>
+      <TodayJindo lang={lang} />
       </>}
       {historyPage && <>
       <h1 class="visually-hidden">{t.nav[0]}</h1>

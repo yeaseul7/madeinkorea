@@ -8,3 +8,7 @@ dist/
 
 preview.png
 *-preview.png
+
+# YouTube metadata is refreshed in CI, never committed to Git history.
+.generated/
+.reports/
