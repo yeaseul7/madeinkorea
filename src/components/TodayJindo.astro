@@ -6,8 +6,8 @@ import type { Language } from '../data/content';
 interface Props { lang: Language; }
 const { lang } = Astro.props;
 let cache = null;
-try { cache = JSON.parse(readFileSync(resolve('.generated/videos.json'), 'utf8')); } catch {}
-const videos = selectVideos(cache);
+try { cache = JSON.parse(readFileSync(resolve(`.generated/videos-${lang}.json`), 'utf8')); } catch {}
+const videos = selectVideos(cache, lang);
 const t = {
   ko: { title: '오늘의 진돗개', intro: '영상으로 만나는 진돗개의 하루.', play: '영상 재생', watch: 'YouTube에서 보기', empty: '잠시 쉬어가는 중이에요.', soon: '새로운 진돗개 영상을 곧 만나보세요.', note: '재생하면 YouTube에 연결됩니다. 영상과 자막은 원본에서 제공하는 언어로 재생됩니다.', terms: 'YouTube 이용약관', privacy: 'Google 개인정보처리방침' },
   en: { title: 'Today’s Jindo', intro: 'A little glimpse into life with a Jindo.', play: 'Play video', watch: 'Watch on YouTube', empty: 'More Jindo moments, coming soon.', soon: 'Check back soon for new videos.', note: 'Playing connects to YouTube. Audio and captions use the languages available in the original video.', terms: 'YouTube Terms', privacy: 'Google Privacy Policy' },

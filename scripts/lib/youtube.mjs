@@ -1,5 +1,10 @@
 export const ID_PATTERN = /^[A-Za-z0-9_-]{11}$/;
-export const MAX_VIDEOS = 5;
+export const MAX_VIDEOS = 3;
+export const VIDEO_MARKETS = {
+  ko: { regionCode: 'KR', query: '진돗개 일상' },
+  en: { regionCode: 'US', query: 'Korean Jindo dog' },
+  ja: { regionCode: 'JP', query: '珍島犬' },
+};
 export const MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
 
 export function isPlayable(item) {
@@ -38,7 +43,8 @@ export async function videoDetails(ids, options) {
   return results;
 }
 
-export function selectVideos(cache, now = new Date()) {
+export function selectVideos(cache, locale, now = new Date()) {
+  if (!Object.hasOwn(VIDEO_MARKETS, locale) || cache?.locale !== locale || cache?.regionCode !== VIDEO_MARKETS[locale].regionCode) return [];
   const fetched = Date.parse(cache?.fetchedAt);
   if (!Number.isFinite(fetched) || now.getTime() - fetched >= MAX_AGE_MS || fetched > now.getTime() + 60000 || !Array.isArray(cache?.videos)) return [];
   const seen = new Set();
@@ -49,11 +55,17 @@ export function selectVideos(cache, now = new Date()) {
   }).slice(0, MAX_VIDEOS).map(video => ({ id: video.id, title: video.title, channel: video.channel, expiresAt: new Date(fetched + MAX_AGE_MS).toISOString() }));
 }
 
-export async function collectVideos(options) {
-  const ids = new Set();
-  for (const [q, relevanceLanguage] of [['진돗개 일상', 'ko'], ['Korean Jindo dog', 'en'], ['珍島犬', 'ja']]) {
-    const items = await youtube('search', { part: 'snippet', type: 'video', q, relevanceLanguage, maxResults: String(MAX_VIDEOS), order: 'date', safeSearch: 'strict', videoEmbeddable: 'true', videoSyndicated: 'true' }, options);
-    for (const item of items) if (ID_PATTERN.test(item.id?.videoId || '')) ids.add(item.id.videoId);
-  }
-  return (await videoDetails([...ids], options)).filter(isPlayable).slice(0, MAX_VIDEOS).map(metadata);
+export async function collectVideos(locale, options) {
+  if (!Object.hasOwn(VIDEO_MARKETS, locale)) throw new Error('지원하지 않는 영상 언어입니다.');
+  const market = VIDEO_MARKETS[locale];
+  // Retrieve a small pool so unavailable entries can be skipped, but store only three.
+  const items = await youtube('search', {
+    part: 'snippet', type: 'video', q: market.query, regionCode: market.regionCode,
+    relevanceLanguage: locale, maxResults: '10', order: 'relevance',
+    safeSearch: 'strict', videoEmbeddable: 'true', videoSyndicated: 'true',
+  }, options);
+  const ids = [...new Set(items.map(item => item.id?.videoId).filter(id => ID_PATTERN.test(id || '')))];
+  const details = new Map((await videoDetails(ids, options)).map(item => [item.id, item]));
+  // Preserve each market's search ranking, independent of the details response order.
+  return ids.map(id => details.get(id)).filter(isPlayable).slice(0, MAX_VIDEOS).map(metadata);
 }
