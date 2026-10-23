@@ -9,9 +9,9 @@ let cache = null;
 try { cache = JSON.parse(readFileSync(resolve(`.generated/videos-${lang}.json`), 'utf8')); } catch {}
 const videos = selectVideos(cache, lang);
 const t = {
-  ko: { title: '오늘의 진돗개', intro: '영상으로 만나는 진돗개의 하루.', play: '영상 재생', watch: 'YouTube에서 보기', empty: '잠시 쉬어가는 중이에요.', soon: '새로운 진돗개 영상을 곧 만나보세요.', note: '재생하면 YouTube에 연결됩니다. 영상과 자막은 원본에서 제공하는 언어로 재생됩니다.', terms: 'YouTube 이용약관', privacy: 'Google 개인정보처리방침' },
-  en: { title: 'Today’s Jindo', intro: 'A little glimpse into life with a Jindo.', play: 'Play video', watch: 'Watch on YouTube', empty: 'More Jindo moments, coming soon.', soon: 'Check back soon for new videos.', note: 'Playing connects to YouTube. Audio and captions use the languages available in the original video.', terms: 'YouTube Terms', privacy: 'Google Privacy Policy' },
-  ja: { title: '今日の珍島犬', intro: '動画で出会う、珍島犬の毎日。', play: '動画を再生', watch: 'YouTubeで見る', empty: 'ただいまひと休み中です。', soon: '新しい珍島犬の動画をお楽しみに。', note: '再生するとYouTubeに接続します。音声と字幕は元の動画で提供される言語です。', terms: 'YouTube利用規約', privacy: 'Googleプライバシーポリシー' },
+  ko: { title: '진돗개 관련 컨텐츠를 살펴보아요', intro: '진돗개의 다양한 모습을 영상으로 만나보세요.', play: '영상 재생', watch: 'YouTube에서 보기', empty: '잠시 쉬어가는 중이에요.', soon: '새로운 진돗개 영상을 곧 만나보세요.', note: '재생하면 YouTube에 연결됩니다. 영상과 자막은 원본에서 제공하는 언어로 재생됩니다.', terms: 'YouTube 이용약관', privacy: 'Google 개인정보처리방침' },
+  en: { title: 'Explore the world of Jindos', intro: 'Get to know the Jindo through stories, everyday moments, and videos.', play: 'Play video', watch: 'Watch on YouTube', empty: 'More Jindo moments, coming soon.', soon: 'Check back soon for new videos.', note: 'Playing connects to YouTube. Audio and captions use the languages available in the original video.', terms: 'YouTube Terms', privacy: 'Google Privacy Policy' },
+  ja: { title: '珍島犬のコンテンツを見てみましょう', intro: '動画を通して、珍島犬のさまざまな姿に出会ってみませんか。', play: '動画を再生', watch: 'YouTubeで見る', empty: 'ただいまひと休み中です。', soon: '新しい珍島犬の動画をお楽しみに。', note: '再生するとYouTubeに接続します。音声と字幕は元の動画で提供される言語です。', terms: 'YouTube利用規約', privacy: 'Googleプライバシーポリシー' },
 }[lang];
 ---
 <section id="todays-jindo" class="section wrap today-jindo" aria-labelledby="today-title">
@@ -25,7 +25,7 @@ const t = {
             <span class="today-play" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M8 4v16l13-8z" /></svg></span>
           </button>
         </div>
-        <div class="today-caption"><p class="today-channel">{video.channel}</p><h3>{video.title}</h3><a href={`https://www.youtube.com/watch?v=${video.id}`} target="_blank" rel="noreferrer">{t.watch} ↗</a></div>
+        <div class="today-caption"><p class="today-channel">{video.channel}</p><h3>{video.title}</h3><a href={`https://www.youtube.com/watch?v=${video.id}`} target="_blank" rel="noreferrer"><span>{t.watch}</span><span aria-hidden="true">↗</span></a></div>
       </article>)}
     </div>
     <p class="today-note">{t.note} <a href="https://www.youtube.com/t/terms" target="_blank" rel="noreferrer">{t.terms}</a> · <a href="https://policies.google.com/privacy" target="_blank" rel="noreferrer">{t.privacy}</a></p>
@@ -68,34 +68,44 @@ const t = {
   });
 </script>
 <style>
-  .today-jindo { max-width: 1120px; }
-  .today-heading { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 36px; }
-  .today-heading > p { color: var(--muted); line-height: 1.7; font-size: 17px; }
-  .today-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 40px 24px; }
-  .today-card { min-width: 0; }
+  .today-jindo { max-width: 1200px; }
+  .today-heading { display: flex; justify-content: space-between; align-items: end; gap: 32px; margin-bottom: 40px; }
+  .today-heading h2 { max-width: 20ch; font-size: clamp(28px, 3.3vw, 42px); line-height: 1.35; letter-spacing: -.045em; text-wrap: balance; word-break: keep-all; }
+  .today-heading > p { max-width: 30ch; margin: 0 0 4px; color: var(--muted); line-height: 1.8; font-size: 15px; word-break: keep-all; }
+  .today-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 24px; }
+  .today-card { display: flex; flex-direction: column; min-width: 0; overflow: hidden; border-radius: 12px; background: color-mix(in srgb, var(--paper) 35%, white); box-shadow: 0 4px 20px #292a2705; transition: transform .25s ease, box-shadow .25s ease; }
+  .today-card:hover { transform: translateY(-4px); box-shadow: 0 12px 28px #292a270c; }
   .today-empty[hidden] { display: none; }
-  .today-player { aspect-ratio: 16/9; min-height: 200px; overflow: hidden; background: var(--ink); }
-  .today-poster { position: relative; display: block; width: 100%; height: 100%; padding: 0; border: 0; background: var(--ink); color: white; cursor: pointer; }
-  .today-poster img { width: 100%; height: 100%; object-fit: cover; opacity: .9; transition: opacity .2s; }
-  .today-poster:hover img { opacity: 1; }
-  .today-play { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); display: grid; place-items: center; width: 56px; height: 56px; background: var(--accent); border-radius: 50%; }
-  .today-player :global(iframe) { display: block; width: 100%; height: 100%; border: 0; }
-  .today-caption { margin-top: 18px; }
-  .today-caption h3 { font-size: 18px; font-weight: 600; line-height: 1.6; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-  .today-channel { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
-  .today-caption > a { display: inline-block; font-size: 13px; margin-top: 14px; text-decoration: underline; text-underline-offset: 5px; }
-  .today-note { margin-top: 32px; font-size: 12px; line-height: 1.8; color: var(--muted); }
-  .today-note a { text-decoration: underline; }
-  .today-empty { display: flex; align-items: center; gap: 30px; padding: clamp(28px,5vw,64px); background: var(--surface); }
+  .today-player { position: relative; aspect-ratio: 16/9; flex-shrink: 0; overflow: hidden; background: var(--ink); }
+  .today-poster { position: absolute; inset: 0; display: block; width: 100%; height: 100%; padding: 0; border: 0; background: var(--ink); color: white; cursor: pointer; }
+  .today-poster img { display: block; width: 100%; height: 100%; object-fit: cover; opacity: .94; transition: opacity .3s, transform .4s ease; }
+  .today-poster:hover img { opacity: 1; transform: scale(1.035); }
+  .today-poster:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; }
+  .today-play { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); display: grid; place-items: center; width: 50px; height: 50px; color: var(--ink); background: #f4f0e7ed; border: 1px solid #ffffff80; border-radius: 50%; box-shadow: 0 4px 20px #0002; transition: background .2s, color .2s; }
+  .today-play svg { width: 18px; height: 18px; margin-left: 2px; }
+  .today-poster:hover .today-play, .today-poster:focus-visible .today-play { background: var(--accent); color: white; }
+  .today-player :global(iframe) { position: absolute; inset: 0; display: block; width: 100%; height: 100%; border: 0; }
+  .today-caption { display: flex; flex-direction: column; flex: 1; padding: 22px 24px 20px; }
+  .today-caption h3 { margin: 0 0 24px; font-size: 17px; font-family: inherit; font-weight: 600; line-height: 1.65; letter-spacing: -.025em; word-break: keep-all; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .today-channel { font-size: 12px; color: var(--muted); line-height: 1.6; margin: 0 0 9px; overflow-wrap: anywhere; }
+  .today-caption > a { display: flex; align-items: center; justify-content: space-between; gap: 16px; font-size: 12px; margin-top: auto; padding-top: 15px; border-top: 1px solid color-mix(in srgb, var(--line) 50%, transparent); }
+  .today-caption > a:hover { color: var(--accent); }
+  .today-caption > a > span:last-child { font-size: 19px; }
+  .today-note { max-width: 90ch; margin-top: 24px; font-size: 11px; line-height: 1.9; color: var(--muted); }
+  .today-note a { text-decoration: underline; text-underline-offset: 3px; }
+  .today-empty { display: flex; align-items: center; gap: 30px; padding: clamp(28px,5vw,64px); border-radius: 12px; background: var(--surface); }
   .today-empty-mark { font-size: 48px; line-height: 1; color: var(--accent); }
   .today-empty h3 { font-size: 22px; margin-bottom: 8px; }
   .today-empty p { font-size: 16px; color: var(--muted); line-height: 1.7; }
-  @media(max-width: 1100px) { .today-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
-  @media(max-width: 680px) {
-    .today-grid { grid-template-columns: 1fr; gap: 36px; }
-    .today-heading { flex-direction: column; align-items: start; gap: 16px; }
-    .today-heading > p { font-size: 16px; }
+  @media(max-width: 1000px) { .today-grid { gap: 18px; } .today-caption { padding: 18px; } .today-heading > p { max-width: 25ch; } }
+  @media(max-width: 800px) { .today-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+  @media(max-width: 600px) {
+    .today-grid { grid-template-columns: 1fr; gap: 24px; }
+    .today-heading { flex-direction: column; align-items: start; gap: 14px; margin-bottom: 28px; }
+    .today-heading > p { max-width: none; font-size: 14px; }
+    .today-caption { padding: 20px; }
     .today-empty { flex-direction: column; align-items: start; gap: 18px; }
     .today-empty h3 { font-size: 19px; }
   }
+  @media(prefers-reduced-motion: reduce) { .today-card, .today-poster img, .today-play { transition: none; } .today-card:hover, .today-poster:hover img { transform: none; } }
 </style>
