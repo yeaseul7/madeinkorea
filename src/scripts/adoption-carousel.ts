@@ -14,7 +14,7 @@ export function setupAdoptionCarousel() {
   let visible = false;
   let hovering = false;
   const cards = Array.from(track.children) as HTMLElement[];
-  const interval = 4000;
+  const interval = 2000;
   let looping = false;
   let settleTimer = 0;
   let timer = 0;
