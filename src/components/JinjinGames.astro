@@ -1,5 +1,6 @@
 ---
 import type { Language } from '../data/content';
+import JinjinCatch from './JinjinCatch.astro';
 import { gamesContent } from '../data/games';
 interface Props { lang: Language; base: string; }
 const { lang, base } = Astro.props;
@@ -20,10 +21,11 @@ const symbol = `${base}/images/jinjin-symbol-128.webp`;
   </ul>
 </section>
 <style>
+  :global(.games-page #main) { background:#fff; }
   .games { padding-block:32px clamp(56px,7vw,88px); }
   .games-label { display:inline-block; margin-bottom:24px; font-family:inherit; font-size:14px; font-weight:500; letter-spacing:0; line-height:1.5; color:var(--muted); }
   .game-list { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px; list-style:none; margin:0; padding:0; }
-  .game-card { overflow:hidden; border:1px solid color-mix(in srgb,var(--line) 65%,transparent); border-radius:16px; background:#fcfaf6; display:flex; flex-direction:column; }
+  .game-card { overflow:hidden; border:1px solid color-mix(in srgb,var(--line) 65%,transparent); border-radius:16px; background:#fff; display:flex; flex-direction:column; }
   .game-cover { height:240px; display:grid; place-items:center; overflow:hidden; }
   .cover-quiz { background:#eaded0; }
   .cover-memory { background:#e3e5dc; }
