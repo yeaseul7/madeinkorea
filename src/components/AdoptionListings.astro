@@ -2,12 +2,14 @@
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { freshAdoptions, ADOPTION_MAX_AGE } from '../../scripts/lib/adoptions.mjs';
+import { previewAge, previewLocation, previewWeight } from '../data/adoption-preview.mjs';
 import type { Language } from '../data/content';
 interface Props { lang: Language; }
 const { lang } = Astro.props;
 let feed = { fetchedAt: '', animals: [] };
 try { feed = JSON.parse(await readFile(resolve('.generated/adoptions.json'), 'utf8')); } catch {}
 const animals = freshAdoptions(feed);
+const currentYear = Number(new Intl.DateTimeFormat('en', { timeZone: 'Asia/Seoul', year: 'numeric' }).format(new Date()));
 const adoptionSearch = `https://matchichi.com/?q=%EC%A7%84%EB%8F%84${lang === 'ko' ? '' : '&lang=en'}`;
 function listingUrl(url: string) {
   if (lang === 'ko') return url;
@@ -16,15 +18,15 @@ function listingUrl(url: string) {
   return localized.href;
 }
 const text = {
-  ko: { previous: '이전 공고', next: '다음 공고', pause: '자동 넘김 멈추기', play: '자동 넘김 시작', position: '공고 탐색 위치', title: '가족을 기다리는 아이들', intro: '꼬순내에서 ‘진도’로 검색되는 개 공고를 공고 시작일 최신순으로 보여드립니다. 진도 믹스와 지역·특징에 검색어가 포함된 공고도 있습니다.', source: '국가동물보호정보 · 꼬순내', checked: '목록 확인', notice: '공고일', updated: '원본 갱신', noticeState: '공고 중', protect: '보호 중', male: '수컷', female: '암컷', unknown: '성별 미상', shelter: '보호소', region: '지역', age: '출생 정보', detail: '공고 자세히 보기', all: '국내입양하기', prepare: '입양 준비 확인하기', empty: '현재 공고를 불러오지 못했거나 표시할 공고가 없습니다. 꼬순내에서 최신 목록을 확인해 주세요.', note: '입양 가능 여부와 조건은 담당 보호소에 확인해 주세요. 해외 입양 가능 여부는 확인되지 않았습니다.', original: '보호소 기록', photo: '보호 중인 개의 공고 사진', noPhoto: '사진 준비 중', missing: '정보 없음' },
-  en: { previous: 'Previous listings', next: 'Next listings', pause: 'Pause autoplay', play: 'Start autoplay', position: 'Listing scroll position', title: 'Meet dogs waiting for a home', intro: 'Dog listings matching “진도” (Jindo) on Kkosunnae, newest notice first. Results may include mixes and matches in location or descriptive text.', source: 'Korean animal protection data · Kkosunnae', checked: 'List checked', notice: 'Notice date', updated: 'Source updated', noticeState: 'Public notice', protect: 'In care', male: 'Male', female: 'Female', unknown: 'Sex unknown', shelter: 'Shelter', region: 'Location', age: 'Birth information', detail: 'View listing', all: 'International adoption', prepare: 'Prepare for adoption', empty: 'Listings are unavailable or no matching dogs were found. Check Kkosunnae for the latest information.', note: 'Confirm availability and requirements with the shelter. International adoption eligibility has not been verified.', original: 'Shelter notes · Korean', photo: 'Shelter listing photograph of a dog', noPhoto: 'Photo unavailable', missing: 'Not provided' },
-  ja: { previous: '前の情報', next: '次の情報', pause: '自動送りを停止', play: '自動送りを開始', position: '情報のスクロール位置', title: '家族を待っている犬たち', intro: 'Kkosunnaeで「진도（珍島）」に一致する犬の情報を、公告開始日の新しい順に表示します。ミックス犬や、地域・特徴の記述に一致する情報も含まれます。', source: '韓国の動物保護情報 · Kkosunnae', checked: '一覧確認日', notice: '公告日', updated: '原情報の更新日', noticeState: '公告中', protect: '保護中', male: 'オス', female: 'メス', unknown: '性別不明', shelter: '保護施設', region: '所在地', age: '出生情報', detail: '詳細を見る', all: '海外譲渡について', prepare: '迎える準備を確認する', empty: '情報を取得できないか、該当する犬がいません。最新情報はKkosunnaeでご確認ください。', note: '譲渡の可否と条件は保護施設にご確認ください。海外への譲渡可否は確認されていません。', original: '保護施設の記録 · 韓国語', photo: '保護されている犬の公告写真', noPhoto: '写真はありません', missing: '情報なし' },
+  ko: { previous: '이전 공고', next: '다음 공고', pause: '자동 넘김 멈추기', play: '자동 넘김 시작', position: '공고 탐색 위치', title: '가족을 기다리는 아이들', intro: '한국에서 보호 중인 아이들의 사진과 이야기를 만나보세요.', source: '국가동물보호정보 · 꼬순내', checked: '목록 확인', notice: '공고일', updated: '원본 갱신', noticeState: '공고 중', protect: '보호 중', male: '수컷', female: '암컷', unknown: '성별 미상', shelter: '보호소', region: '지역', age: '출생 정보', detail: '이 아이 알아보기', all: '국내입양하기', prepare: '입양 준비 확인하기', empty: '현재 공고를 불러오지 못했거나 표시할 공고가 없습니다. 꼬순내에서 최신 목록을 확인해 주세요.', note: '입양 가능 여부와 조건은 담당 보호소에 확인해 주세요. 해외 입양 가능 여부는 확인되지 않았습니다.', original: '보호소 기록', photo: '보호 중인 개의 공고 사진', noPhoto: '사진 준비 중', missing: '정보 없음' },
+  en: { previous: 'Previous listings', next: 'Next listings', pause: 'Pause autoplay', play: 'Start autoplay', position: 'Listing scroll position', title: 'Meet dogs waiting for a home', intro: 'Meet dogs currently in care in South Korea.', source: 'Korean animal protection data · Kkosunnae', checked: 'List checked', notice: 'Notice date', updated: 'Source updated', noticeState: 'Public notice', protect: 'In care', male: 'Male', female: 'Female', unknown: 'Sex unknown', shelter: 'Shelter', region: 'Location', age: 'Birth information', detail: 'Meet this dog', all: 'International adoption', prepare: 'Prepare for adoption', empty: 'Listings are unavailable or no matching dogs were found. Check Kkosunnae for the latest information.', note: 'Confirm availability and requirements with the shelter. International adoption eligibility has not been verified.', original: 'Shelter notes · Korean', photo: 'Shelter listing photograph of a dog', noPhoto: 'Photo unavailable', missing: 'Not provided' },
+  ja: { previous: '前の情報', next: '次の情報', pause: '自動送りを停止', play: '自動送りを開始', position: '情報のスクロール位置', title: '家族を待っている犬たち', intro: '韓国で保護されている犬たちに出会ってみませんか。', source: '韓国の動物保護情報 · Kkosunnae', checked: '一覧確認日', notice: '公告日', updated: '原情報の更新日', noticeState: '公告中', protect: '保護中', male: 'オス', female: 'メス', unknown: '性別不明', shelter: '保護施設', region: '所在地', age: '出生情報', detail: 'この子をもっと知る', all: '海外譲渡について', prepare: '迎える準備を確認する', empty: '情報を取得できないか、該当する犬がいません。最新情報はKkosunnaeでご確認ください。', note: '譲渡の可否と条件は保護施設にご確認ください。海外への譲渡可否は確認されていません。', original: '保護施設の記録 · 韓国語', photo: '保護されている犬の公告写真', noPhoto: '写真はありません', missing: '情報なし' },
 }[lang];
 function breedLabel(breed: string) {
   if (lang === 'ko') return breed || text.missing;
   if (['진도견', '진돗개', '진도개'].includes(breed)) return lang === 'ja' ? '珍島犬' : 'Jindo';
   if (breed === '믹스견') return lang === 'ja' ? 'ミックス犬' : 'Mixed breed';
-  return breed || text.missing;
+  return lang === 'ja' ? '犬' : 'Dog';
 }
 const checked = Number.isFinite(Date.parse(feed.fetchedAt)) ? new Intl.DateTimeFormat(lang, { timeZone: 'Asia/Seoul', year: 'numeric', month: 'short', day: 'numeric' }).format(new Date(feed.fetchedAt)) : '';
 ---
@@ -39,9 +41,11 @@ const checked = Number.isFinite(Date.parse(feed.fetchedAt)) ? new Intl.DateTimeF
       </a>
       <div class="adoption-card-body">
         <div class="adoption-card-title"><h3>{breedLabel(animal.breed)}</h3><span>{animal.sex === 'M' ? text.male : animal.sex === 'F' ? text.female : text.unknown}</span></div>
-        <p class="adoption-notice-number" lang="ko">{animal.noticeNo || animal.id}</p>
-        <dl><div><dt>{text.age}</dt><dd lang="ko">{animal.age || text.missing}{animal.weight ? ` · ${animal.weight}` : ''}</dd></div><div><dt>{text.region}</dt><dd lang="ko">{animal.region || text.missing}</dd></div><div><dt>{text.shelter}</dt><dd lang="ko">{animal.shelter || text.missing}</dd></div><div><dt>{text.notice}</dt><dd>{animal.noticeDate ? <time datetime={animal.noticeDate}>{animal.noticeDate}</time> : text.missing}</dd></div>{animal.updatedDate && <div><dt>{text.updated}</dt><dd><time datetime={animal.updatedDate}>{animal.updatedDate}</time></dd></div>}</dl>
-        {animal.description && <details class="shelter-notes"><summary>{text.original}</summary><p lang="ko">{animal.description}</p></details>}
+        <p class="adoption-location"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z" /><circle cx="12" cy="10" r="2.5" /></svg>{previewLocation(animal.region, lang)}</p>
+        <ul class="adoption-facts">
+          {previewAge(animal.age, lang, currentYear) && <li>{previewAge(animal.age, lang, currentYear)}</li>}
+          {previewWeight(animal.weight) && <li>{previewWeight(animal.weight)}</li>}
+        </ul>
         <a class="text-link adoption-detail" href={listingUrl(animal.url)} target="_blank" rel="noreferrer">{text.detail} ↗</a>
       </div>
     </article>)}</div>
@@ -97,24 +101,21 @@ const checked = Number.isFinite(Date.parse(feed.fetchedAt)) ? new Intl.DateTimeF
   .adoption-carousel-controls button:disabled { opacity:.3; cursor:default; }
   .adoption-cards:focus-visible, .adoption-carousel-controls button:focus-visible { outline:2px solid var(--accent); outline-offset:4px; }
   @media(prefers-reduced-motion:reduce) { .adoption-carousel-controls button { transition:none; } }
-  .adoption-card { min-width:0; }
+  .adoption-card { min-width:0; display:flex; flex-direction:column; }
   .adoption-photo { position:relative; display:block; aspect-ratio:5/4; overflow:hidden; background:var(--surface); }
   .photo-fallback { position:absolute; inset:0; display:grid; place-items:center; font-size:14px; color:var(--muted); }
   .adoption-photo img { position:relative; display:block; width:100%; height:100%; object-fit:contain; background:var(--surface); }
   .adoption-photo img[hidden] { display:none; }
   .adoption-status { position:absolute; top:14px; left:14px; padding:6px 10px; background:var(--paper); color:var(--ink); font-size:12px; }
-  .adoption-card-body { padding-top:20px; }
+  .adoption-card-body { padding-top:20px; display:flex; flex-direction:column; flex:1; }
   .adoption-card-title { display:flex; align-items:center; justify-content:space-between; gap:12px; }
   .adoption-card-title h3 { margin:0; font-family:inherit; font-size:23px; font-weight:600; line-height:1.4; letter-spacing:-.03em; }
   .adoption-card-title span { font-size:13px; color:var(--muted); }
-  .adoption-notice-number { margin:8px 0 20px; color:var(--muted); font-size:13px; }
-  dl { display:grid; gap:9px; margin:0; font-size:14px; line-height:1.6; }
-  dl > div { display:grid; grid-template-columns:minmax(76px,.8fr) 2fr; gap:12px; }
-  dt { color:var(--muted); } dd { margin:0; overflow-wrap:anywhere; }
-  .shelter-notes { margin-top:18px; font-size:14px; }
-  .shelter-notes summary { cursor:pointer; color:var(--muted); }
-  .shelter-notes p { line-height:1.7; }
-  .adoption-detail { display:inline-block; margin-top:22px; font-size:14px; }
+  .adoption-location { display:flex; align-items:center; gap:6px; color:var(--muted); font-size:13px; line-height:1.6; margin:10px 0 18px; }
+  .adoption-location svg { flex-shrink:0; }
+  .adoption-facts { display:flex; flex-wrap:wrap; gap:8px; list-style:none; padding:0; margin:0; min-height:32px; }
+  .adoption-facts li { display:flex; align-items:center; padding:6px 11px; border-radius:6px; background:var(--surface); font-size:13px; line-height:1.5; }
+  .adoption-detail { display:inline-block; align-self:start; margin-top:auto; padding-top:22px; font-size:14px; }
   .adoption-provenance { margin-top:32px; font-size:12px; color:var(--muted); }
   .adoption-list-footer { display:flex; justify-content:space-between; align-items:start; gap:24px; margin-top:24px; }
   .adoption-list-footer p { margin:0; max-width:72ch; font-size:14px; line-height:1.7; color:var(--muted); }
