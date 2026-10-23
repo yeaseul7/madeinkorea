@@ -18,7 +18,7 @@ const ui = {
   en: { title: ['Have you heard', 'of the Jindo?'], intro: 'Discover a story that began in Jindo, Korea.', button: 'Get to know the Jindo', photoTitle: 'The Return of Baekgu', photoCaption: 'Returned Baekgu statue', photoAlt: 'The Returned Baekgu statue, showing a dog and a person facing each other in a rural landscape', calligraphyAlt: 'Jindo written in Korean brush calligraphy', place: 'Jindo, Jeollanam-do', country: 'Jindo, South Korea', mapJindo: 'JINDO', mapKorea: 'KOREA', community: 'Community', adoption: 'Adoption', prepare: 'Prepare for adoption', mapCredit: 'Map data source', akc: 'American Kennel Club — Korean Jindo Dog', ukc: 'United Kennel Club — Jindo breed standard' },
   ja: { title: ['珍島犬を', '知っていますか？'], intro: '韓国の珍島から始まった物語に出会ってみませんか。', button: '珍島犬を知る', photoTitle: '帰ってきた白狗', photoCaption: '帰ってきた白狗の像', photoAlt: '田園を背景に白い犬と人が向き合う「帰ってきた白狗」の像', calligraphyAlt: '韓国語で「珍島犬」と書かれた筆文字', place: '全羅南道・珍島', country: '韓国・珍島', mapJindo: '珍島', mapKorea: '韓国', community: 'コミュニティ', adoption: '譲渡', prepare: '迎える準備を確認する', mapCredit: '地図データの出典', akc: 'American Kennel Club — 珍島犬の紹介', ukc: 'United Kennel Club — 珍島犬の犬種標準' },
 }[lang];
-const sections = ['story', 'character', 'community', 'adoption-listings'];
+const sections = ['story', 'community', 'adoption-listings'];
 const historyUrl = `${home}history/`;
 const pagePath = historyPage ? historyUrl : home;
 const pageTitle = historyPage ? t.nav[0] : t.title;
@@ -88,8 +88,6 @@ const canonical = new URL(pagePath, Astro.site);
       </section>
       </>}
       {!historyPage && <>
-      <section id="character" class="section character"><div class="wrap"><div class="section-heading"><div><p class="eyebrow">{t.traitsLabel}</p><h2>{t.traitsTitle}</h2></div><p>{t.traitsIntro}</p></div><div class="trait-grid">{t.traits.map(([title,body],i) => <article class="trait"><span class="card-number">0{i+1}</span><h3>{title}</h3><p>{body}</p></article>)}</div></div></section>
-      <section id="together" class="section wrap living"><div class="section-copy"><p class="eyebrow">{t.lifeLabel}</p><h2>{t.lifeTitle}</h2><p>{t.lifeIntro}</p></div><div class="life-list">{t.life.map(([title,body],i) => <article><span>0{i+1}</span><div><h3>{title}</h3><p>{body}</p></div></article>)}</div></section>
       <section id="community" class="section wrap community-section"><p class="eyebrow">{ui.community}</p><h2>{t.communityTitle}</h2><p>{t.communityBody}</p></section>
       <AdoptionListings lang={lang} />
       <section id="adoption" class="adoption section"><div class="wrap"><p class="eyebrow">{t.adoptionLabel}</p><h2>{t.adoptionTitle}</h2><p class="adoption-intro">{t.adoptionIntro}</p><div class="adoption-grid"><div class="checklist" data-ready={t.checked} data-pending={t.unchecked}><div class="check-progress"><span><strong id="check-count">0</strong> / 4 {t.progress}</span><button id="reset-checklist" type="button">{t.reset}</button></div><progress id="preparation-progress" max="4" value="0" aria-label={t.progress}></progress>{t.checks.map(label => <label class="check-row"><input type="checkbox" name="preparation" /><span>{label}</span></label>)}<p id="check-feedback" aria-live="polite">{t.unchecked}</p></div><aside class="rescue"><span class="rescue-icon" aria-hidden="true">↗</span><h3>{t.rescueTitle}</h3><p>{t.rescueBody}</p><a class="button light" href="https://www.koreank9rescue.org/adopt/" target="_blank" rel="noreferrer">{t.rescueLink}<span aria-hidden="true">↗</span></a><small>{t.rescueNote}</small></aside></div></div></section>
