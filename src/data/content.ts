@@ -3,7 +3,7 @@ export type Language = keyof typeof languages;
 export const content = {
   en: {
     title: 'Have you heard of the Jindo?', description: 'Meet the Jindo, a dog from Korea. Discover their character, their charm, and the life you could share.',
-    communityTitle: 'Community', communityBody: 'A place for everyday stories and questions about life with a Jindo. The community is being prepared; posting is not available yet.', listingsTitle: 'Adoption listings', listingsBody: 'There are no partner listings published here yet. In the meantime, explore adoption preparation and the external rescue resource below.', nav: ['Historical Facts', 'Community', 'Adoption listings'], skip: 'Skip to content', language: 'Language', menu: 'Menu',
+    listingsTitle: 'Adoption listings', listingsBody: 'There are no partner listings published here yet. In the meantime, explore adoption preparation and the external rescue resource below.', nav: ['Historical Facts', 'Adoption listings'], skip: 'Skip to content', language: 'Language', menu: 'Menu',
     eyebrow: 'THE KOREAN JINDO · AN INTRODUCTION', hero: ['Have you heard', 'of the Jindo?'], intro: 'A dog named after Jindo Island, South Korea.\nAn introduction to the breed, the place, and life together.', primary: 'Meet the Jindo', secondary: 'Thinking about adoption?', scroll: 'Read the introduction', photo: 'A white Jindo wearing a harness in an autumn park', caption: '백구 · WHITE COAT',
     ribbon: ['ORIGIN / Jindo, South Korea', 'NAME / 진돗개 · Jindotgae', 'EXPLORE / Character, care & adoption'],
     originLabel: '01 / ROOTED IN KOREA', originTitle: 'The name begins\nwith a place.', originBody: 'Jindo is an island in Jeollanam-do, off the southwestern coast of South Korea. The breed takes its name from this place. In Korean, 개 (gae) means dog; 진돗개 (Jindotgae) brings the place and the animal together.', originLink: 'Read the breed introduction', mapLabel: 'Jindo Island, South Korea', mapNote: 'Illustrated location · not to scale',
@@ -19,7 +19,7 @@ export const content = {
   },
   ko: {
     title: '진돗개에 대해 들어보셨나요?', description: '한국에서 온 진돗개. 진돗개의 특성과 매력, 함께 살아가는 일상과 입양 준비를 만나보세요.',
-    communityTitle: '커뮤', communityBody: '진돗개와 함께하는 일상과 궁금한 이야기를 나눌 공간입니다. 현재 준비 중이며 게시글 작성 기능은 아직 제공하지 않습니다.', listingsTitle: '입양공고', listingsBody: '아직 등록된 협력 단체의 입양공고가 없습니다. 아래 입양 준비 안내와 외부 보호단체 정보를 먼저 확인해 보세요.', nav: ['역사적 사실', '커뮤', '입양공고'], skip: '본문으로 건너뛰기', language: '언어', menu: '메뉴',
+    listingsTitle: '입양공고', listingsBody: '아직 등록된 협력 단체의 입양공고가 없습니다. 아래 입양 준비 안내와 외부 보호단체 정보를 먼저 확인해 보세요.', nav: ['역사적 사실', '입양공고'], skip: '본문으로 건너뛰기', language: '언어', menu: '메뉴',
     eyebrow: '한국의 진돗개를 기록하다', hero: ['진돗개에 대해', '들어보셨나요?'], intro: '대한민국 진도의 이름을 지닌 개.\n그 시작과 특성, 함께 살아가는 방법을 소개합니다.', primary: '진돗개 만나기', secondary: '입양을 생각하고 있나요?', scroll: '진돗개의 시작 알아보기', photo: '가을 공원에서 하네스를 착용하고 서 있는 백구 진돗개', caption: '백구 · WHITE COAT',
     ribbon: ['출신 / 대한민국 진도', '이름 / 진돗개 · Jindotgae', '기록 / 특성, 생활, 입양'],
     originLabel: '01 / 한국에서 온 이야기', originTitle: '진돗개의 이름에는\n진도가 있습니다.', originBody: '진도는 대한민국 서남쪽, 전라남도에 있는 섬입니다. 진돗개는 이 지역의 이름을 지닌 한국의 개입니다. 지역을 뜻하는 ‘진도’와 동물을 뜻하는 ‘개’가 만나 ‘진돗개’라는 이름이 되었습니다.', originLink: '품종 소개 읽기', mapLabel: '대한민국, 진도', mapNote: '위치를 표현한 일러스트 · 실제 축척 아님',
@@ -35,7 +35,7 @@ export const content = {
   },
   ja: {
     title: '珍島犬を知っていますか？', description: '韓国から来た珍島犬。その個性と魅力、一緒に暮らす毎日、そして譲渡を迎える準備をご紹介します。',
-    communityTitle: 'コミュニティ', communityBody: '珍島犬との日常や疑問を分かち合う場所です。現在準備中で、投稿機能はまだ利用できません。', listingsTitle: '譲渡情報', listingsBody: '提携団体の譲渡情報はまだ掲載していません。以下の準備ガイドと外部の保護団体情報をご覧ください。', nav: ['歴史的事実', 'コミュニティ', '譲渡情報'], skip: '本文へスキップ', language: '言語', menu: 'メニュー',
+    listingsTitle: '譲渡情報', listingsBody: '提携団体の譲渡情報はまだ掲載していません。以下の準備ガイドと外部の保護団体情報をご覧ください。', nav: ['歴史的事実', '譲渡情報'], skip: '本文へスキップ', language: '言語', menu: 'メニュー',
     eyebrow: '韓国の珍島犬を記録する', hero: ['珍島犬を', '知っていますか？'], intro: '韓国の珍島にちなんで名付けられた犬。\nその背景と個性、一緒に暮らす日々をご紹介します。', primary: '珍島犬に出会う', secondary: '迎えることを考えていますか？', scroll: '珍島犬の背景を知る', photo: '秋の公園でハーネスを着けて立つ白い珍島犬', caption: '백구 · WHITE COAT',
     ribbon: ['出身 / 韓国・珍島', '名前 / 진돗개 · Jindotgae', '記録 / 特性、暮らし、譲渡'],
     originLabel: '01 / 韓国からの物語', originTitle: 'その名前は、\nひとつの島から。', originBody: '珍島は韓国南西部の全羅南道にある島です。珍島犬の名前はこの場所に由来します。韓国語の개（gae）は犬を意味し、진돗개（Jindotgae）は地名と犬を結びつけた名前です。', originLink: '犬種の紹介を読む', mapLabel: '韓国・珍島', mapNote: '位置を示すイラスト・縮尺は実際と異なります',

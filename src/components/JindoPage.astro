@@ -14,11 +14,11 @@ const c = chapters[lang];
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const home = `${base}/${lang}/`;
 const ui = {
-  ko: { title: ['진도개에 대해', '들어보셨나요?'], intro: '한국의 진도에서 시작된 이야기를 만나보세요.', button: '진도개 알아보기', photoTitle: '돌아온 백구', photoCaption: '돌아온 백구상', photoAlt: '들판을 배경으로 백구와 사람이 마주 보는 돌아온 백구상', calligraphyAlt: '진돗개 붓글씨', place: '전라남도 진도', country: '대한민국 진도', mapJindo: '진도', mapKorea: '대한민국', community: '커뮤니티', adoption: '입양', prepare: '입양 준비 확인하기', mapCredit: '지도 데이터 출처', akc: 'American Kennel Club — 진돗개 소개', ukc: 'United Kennel Club — 진돗개 품종 표준' },
-  en: { title: ['Have you heard', 'of the Jindo?'], intro: 'Discover a story that began in Jindo, Korea.', button: 'Get to know the Jindo', photoTitle: 'The Return of Baekgu', photoCaption: 'Returned Baekgu statue', photoAlt: 'The Returned Baekgu statue, showing a dog and a person facing each other in a rural landscape', calligraphyAlt: 'Jindo written in Korean brush calligraphy', place: 'Jindo, Jeollanam-do', country: 'Jindo, South Korea', mapJindo: 'JINDO', mapKorea: 'KOREA', community: 'Community', adoption: 'Adoption', prepare: 'Prepare for adoption', mapCredit: 'Map data source', akc: 'American Kennel Club — Korean Jindo Dog', ukc: 'United Kennel Club — Jindo breed standard' },
-  ja: { title: ['珍島犬を', '知っていますか？'], intro: '韓国の珍島から始まった物語に出会ってみませんか。', button: '珍島犬を知る', photoTitle: '帰ってきた白狗', photoCaption: '帰ってきた白狗の像', photoAlt: '田園を背景に白い犬と人が向き合う「帰ってきた白狗」の像', calligraphyAlt: '韓国語で「珍島犬」と書かれた筆文字', place: '全羅南道・珍島', country: '韓国・珍島', mapJindo: '珍島', mapKorea: '韓国', community: 'コミュニティ', adoption: '譲渡', prepare: '迎える準備を確認する', mapCredit: '地図データの出典', akc: 'American Kennel Club — 珍島犬の紹介', ukc: 'United Kennel Club — 珍島犬の犬種標準' },
+  ko: { title: ['진도개에 대해', '들어보셨나요?'], intro: '한국의 진도에서 시작된 이야기를 만나보세요.', button: '진도개 알아보기', photoTitle: '돌아온 백구', photoCaption: '돌아온 백구상', photoAlt: '들판을 배경으로 백구와 사람이 마주 보는 돌아온 백구상', calligraphyAlt: '진돗개 붓글씨', place: '전라남도 진도', country: '대한민국 진도', mapJindo: '진도', mapKorea: '대한민국', adoption: '입양', prepare: '입양 준비 확인하기', mapCredit: '지도 데이터 출처', akc: 'American Kennel Club — 진돗개 소개', ukc: 'United Kennel Club — 진돗개 품종 표준' },
+  en: { title: ['Have you heard', 'of the Jindo?'], intro: 'Discover a story that began in Jindo, Korea.', button: 'Get to know the Jindo', photoTitle: 'The Return of Baekgu', photoCaption: 'Returned Baekgu statue', photoAlt: 'The Returned Baekgu statue, showing a dog and a person facing each other in a rural landscape', calligraphyAlt: 'Jindo written in Korean brush calligraphy', place: 'Jindo, Jeollanam-do', country: 'Jindo, South Korea', mapJindo: 'JINDO', mapKorea: 'KOREA', adoption: 'Adoption', prepare: 'Prepare for adoption', mapCredit: 'Map data source', akc: 'American Kennel Club — Korean Jindo Dog', ukc: 'United Kennel Club — Jindo breed standard' },
+  ja: { title: ['珍島犬を', '知っていますか？'], intro: '韓国の珍島から始まった物語に出会ってみませんか。', button: '珍島犬を知る', photoTitle: '帰ってきた白狗', photoCaption: '帰ってきた白狗の像', photoAlt: '田園を背景に白い犬と人が向き合う「帰ってきた白狗」の像', calligraphyAlt: '韓国語で「珍島犬」と書かれた筆文字', place: '全羅南道・珍島', country: '韓国・珍島', mapJindo: '珍島', mapKorea: '韓国', adoption: '譲渡', prepare: '迎える準備を確認する', mapCredit: '地図データの出典', akc: 'American Kennel Club — 珍島犬の紹介', ukc: 'United Kennel Club — 珍島犬の犬種標準' },
 }[lang];
-const sections = ['story', 'community', 'adoption-listings'];
+const sections = ['story', 'adoption-listings'];
 const historyUrl = `${home}history/`;
 const pagePath = historyPage ? historyUrl : home;
 const pageTitle = historyPage ? t.nav[0] : t.title;
@@ -88,7 +88,6 @@ const canonical = new URL(pagePath, Astro.site);
       </section>
       </>}
       {!historyPage && <>
-      <section id="community" class="section wrap community-section"><p class="eyebrow">{ui.community}</p><h2>{t.communityTitle}</h2><p>{t.communityBody}</p></section>
       <AdoptionListings lang={lang} />
       <section class="section wrap faq"><h2>{t.faqTitle}</h2><div>{t.faqs.map(([q,a]) => <details><summary>{q}<span aria-hidden="true">+</span></summary><p>{a}</p></details>)}</div></section>
       </>}
@@ -135,7 +134,7 @@ const canonical = new URL(pagePath, Astro.site);
       const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
       if ('IntersectionObserver' in window && !motionPreference.matches) {
         const targets = document.querySelectorAll<HTMLElement>(
-          '.section-copy, .section-heading, .trait, .life-list > article, .community-section, .listings-section, .faq > *, .archive-chapter > header, .chapter-grid > figure, .chapter-grid > .chapter-body, .record-layout > *, .origin-stories > section, .preservation-records > section'
+          '.section-copy, .section-heading, .trait, .life-list > article, .listings-section, .faq > *, .archive-chapter > header, .chapter-grid > figure, .chapter-grid > .chapter-body, .record-layout > *, .origin-stories > section, .preservation-records > section'
         );
         const observer = new IntersectionObserver(entries => {
           entries.forEach(entry => {
