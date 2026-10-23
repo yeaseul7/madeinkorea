@@ -14,6 +14,7 @@ const { base } = Astro.props;
   .dog-window { position:absolute; left:5%; right:5%; top:0; bottom:52%; overflow:hidden; z-index:1; }
   .pot-dog { display:block; position:absolute; width:88%; height:100%; left:6%; bottom:-4%; object-fit:contain; object-position:center bottom; transform:translateY(108%); transition:transform 140ms ease-out; }
   :global(.is-up) .pot-dog { transform:translateY(0); }
+  :global(.is-up.is-fake) .pot-dog { transform:translateY(25%); transition-duration:90ms; }
   .pot-body { position:absolute; top:44%; bottom:2%; left:5%; width:90%; height:54%; z-index:2; overflow:visible; }
   .pot-lip { position:absolute; left:9%; right:9%; top:40%; height:12%; border-radius:50%; border-bottom:7px solid #75442b; box-shadow:0 3px 0 #482517; z-index:3; }
   @media(prefers-reduced-motion:reduce) { .pot-dog { transition:none; } }

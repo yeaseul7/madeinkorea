@@ -11,7 +11,7 @@ const t = catchContent[lang];
   <div class="catch-cabinet">
     <div class="catch-hud">
       <div><span>{t.score}</span><strong data-catch-score>0</strong></div>
-      <span class="hud-caption" aria-hidden="true">JINJIN<br/><small>COUNTRY YARD</small></span>
+      <span class="hud-caption">JINJIN<br/><small data-catch-level>LEVEL 1</small></span>
       <div class="combo-counter"><span>{t.combo}</span><strong data-catch-combo>0 · ×1</strong></div>
       <div class="time-counter"><span>{t.time}</span><strong><span data-catch-time>30</span><small> s</small></strong></div>
     </div>
@@ -73,5 +73,5 @@ const t = catchContent[lang];
 </style>
 <style>
   .combo-counter strong { font-size:21px; color:#526953; }
-  @media(max-width:650px) { .hud-caption { display:none; } .catch-hud { gap:12px; } .combo-counter strong { font-size:18px; } }
+  @media(max-width:650px) { .hud-caption { display:block; font-size:11px; letter-spacing:.04em; } .catch-hud { gap:8px; } .combo-counter strong { font-size:18px; } }
 </style>

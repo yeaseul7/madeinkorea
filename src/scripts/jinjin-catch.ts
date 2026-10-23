@@ -22,12 +22,16 @@ export function setupJinjinCatch() {
     const state = game.state();
     root!.dataset.phase = state.phase;
     score.textContent = String(state.score);
+    root!.dataset.level = String(state.level);
+    root!.querySelector<HTMLElement>('[data-catch-level]')!.textContent = `LEVEL ${state.level}`;
     root!.querySelector<HTMLElement>('[data-catch-combo]')!.textContent = `${state.combo} · ×${state.multiplier}`;
     time.textContent = String(Math.ceil(state.remaining / 1000));
     time.closest('.time-counter')?.classList.toggle('is-low', state.remaining <= 5000);
     pots.forEach((pot, index) => {
-      pot.classList.toggle('is-up', state.active === index);
-      if (state.active === index) pot.dataset.kind = state.kind;
+      const target = state.targets.find(target => target.index === index);
+      pot.classList.toggle('is-up', Boolean(target));
+      pot.classList.toggle('is-fake', Boolean(target?.fake));
+      if (target) pot.dataset.kind = target.kind;
       pot.disabled = state.phase !== 'playing';
     });
     overlay.hidden = state.phase === 'playing';
