@@ -60,8 +60,8 @@ export function createCatchGame(random = Math.random) {
     state, tick,
     start(now) {
       phase = 'playing'; score = 0; combo = 0; level = 1; remaining = 30000;
-      deadline = now + remaining; targets = []; retiring = []; director = createSpawnDirector(random); availableAfter = Array(9).fill(0); last = -1; next = now + 400; serial = 0;
-      return state();
+      deadline = now + remaining; targets = []; retiring = []; director = createSpawnDirector(random); availableAfter = Array(9).fill(0); last = -1; next = now; serial = 0;
+      return tick(now);
     },
     hit(index, now) {
       const visibleId = targets.find(target => target.index === index)?.id;

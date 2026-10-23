@@ -784,7 +784,7 @@ html:lang(en) .chapter-body, html:lang(en) .preservation-records { overflow-wrap
  .coastal-hero .hero-intro, .coastal-hero .hero-actions { animation: editorial-rise 1000ms cubic-bezier(.16,1,.3,1) 230ms backwards; }
  .hero-scroll-cue>span:last-child { animation: scroll-invitation 2.2s ease-in-out 3; }
  @supports(animation-timeline:scroll()) {
-  body::before { content: ''; position: fixed; inset: 0 0 auto; height: 3px; background: var(--accent); z-index: 100; pointer-events: none; transform-origin: left; animation: reading-progress linear both; animation-timeline: scroll(root block); }
+  body:not(.games-page)::before { content: ''; position: fixed; inset: 0 0 auto; height: 3px; background: var(--accent); z-index: 100; pointer-events: none; transform-origin: left; animation: reading-progress linear both; animation-timeline: scroll(root block); }
  }
 }
 @media(max-width:760px) {

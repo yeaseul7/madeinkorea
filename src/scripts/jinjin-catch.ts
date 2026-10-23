@@ -62,6 +62,7 @@ export function setupJinjinCatch() {
     const delta = game.state().score - before;
     pots[index].querySelector<HTMLElement>('.catch-pop')!.textContent = `${delta > 0 ? '+' : ''}${delta}`;
     const pot = pots[index];
+    pot.dataset.feedback = delta > 0 ? 'correct' : 'wrong';
     window.clearTimeout(feedback.get(index));
     pot.classList.add('is-hit');
     feedback.set(index, window.setTimeout(() => { pot.classList.remove('is-hit'); feedback.delete(index); }, 500));

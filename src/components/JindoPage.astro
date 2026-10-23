@@ -96,10 +96,9 @@ const canonical = new URL(pagePath, Astro.site);
       </>}
       {!historyPage && !gamesPage && !catchPage && <>
       <AdoptionListings lang={lang} />
-      <section class="section wrap faq"><h2>{t.faqTitle}</h2><div>{t.faqs.map(([q,a]) => <details><summary>{q}<span aria-hidden="true">+</span></summary><p>{a}</p></details>)}</div></section>
       </>}
     </main>
-    <footer class="wrap"><div class="footer-main"><a class="brand" href={home}><img class="brand-symbol" src={`${base}/images/jinjin-symbol-128.webp`} alt="" width="48" height="48" /><span class="brand-title">JINDO OF KOREA</span></a><p>{t.footer}</p><a class="text-link" href="#top">{t.top} ↑</a></div><div class="footer-bottom"><p>{t.independent}</p><details class="credits" id="photo-credit"><summary>{t.sources}</summary><div><p>{ui.mapCredit}: <a href="https://github.com/nvkelso/natural-earth-vector/blob/master/geojson/ne_110m_land.geojson">Natural Earth / 1:110m Land</a></p><p><a href="https://www.akc.org/dog-breeds/korean-jindo-dog/">{ui.akc}</a></p><p><a href="https://www.ukcdogs.com/breed-standards/jindo">{ui.ukc}</a></p></div></details><span>© {new Date().getFullYear()} Jindo of Korea</span></div></footer>
+    <footer class="wrap"><div class="footer-main"><a class="brand" href={home}><span class="brand-title">JINDO OF KOREA</span></a></div></footer>
     <script>
       const heroPanel = document.querySelector<HTMLElement>('.coastal-hero');
       const heroContent = heroPanel?.querySelector<HTMLElement>('.hero');
@@ -141,7 +140,7 @@ const canonical = new URL(pagePath, Astro.site);
       const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
       if ('IntersectionObserver' in window && !motionPreference.matches) {
         const targets = document.querySelectorAll<HTMLElement>(
-          '.section-copy, .section-heading, .trait, .life-list > article, .listings-section, .faq > *, .archive-chapter > header, .chapter-grid > figure, .chapter-grid > .chapter-body, .record-layout > *, .origin-stories > section, .preservation-records > section'
+          '.section-copy, .section-heading, .trait, .life-list > article, .listings-section, .archive-chapter > header, .chapter-grid > figure, .chapter-grid > .chapter-body, .record-layout > *, .origin-stories > section, .preservation-records > section'
         );
         const observer = new IntersectionObserver(entries => {
           entries.forEach(entry => {

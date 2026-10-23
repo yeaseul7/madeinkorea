@@ -5,7 +5,7 @@ const first = game => game.state().targets[0];
 
 test('only visible targets score once; empty jars do nothing', () => {
  const game=createCatchGame(()=>0); assert.equal(game.hit(0,0),false);
- game.start(0); assert.equal(game.hit(0,100),false); game.tick(400);
+ game.start(0); assert.equal(game.state().targets.length,1); assert.equal(first(game).appeared,0); assert.equal(game.hit(1,100),false); game.tick(400);
  assert.equal(game.hit(1,410),false); assert.equal(game.hit(0,420),true);
  assert.equal(game.hit(0,421),false); assert.equal(game.state().score,100);
  game.tick(640); assert.equal(first(game).index,1);
@@ -92,7 +92,7 @@ test('a hit retires immediately, cannot score twice, and reserves its jar during
  const game=createCatchGame(()=>0);game.start(0);game.tick(25000);
  const target=first(game);assert.equal(game.hit(target.index,25001),true);
  assert.ok(!game.state().targets.some(t=>t.id===target.id));
- assert.equal(game.state().retiring[0].id,target.id);
+ assert.ok(game.state().retiring.some(t=>t.id===target.id));
  assert.equal(game.hit(target.index,25002),false);
  for(let now=25003;now<25161;now++){
   game.tick(now);assert.ok(!game.state().targets.some(t=>t.index===target.index));
@@ -101,8 +101,8 @@ test('a hit retires immediately, cannot score twice, and reserves its jar during
 });
 test('clicking an empty jar never hits a new target spawned by the same event',()=>{
  const game=createCatchGame(()=>0);game.start(0);
- assert.equal(game.hit(0,400),false);assert.equal(game.state().score,0);
- assert.equal(game.hit(0,401),true);
+ assert.equal(game.hit(1,1400),false);assert.equal(game.state().score,0);
+ assert.equal(game.hit(1,1401),true);
 });
 test('active and retiring appearances never overlap, even under rapid clicking',()=>{
  const game=createCatchGame(()=>.3);game.start(0);

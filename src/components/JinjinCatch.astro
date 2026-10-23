@@ -8,17 +8,17 @@ const t = catchContent[lang];
 ---
 <section class="catch-game wrap" id="jinjin-catch" aria-labelledby="catch-title" data-copy={JSON.stringify(t)}>
   <div class="catch-heading"><a href={`${base}/${lang}/games/`}>← {t.back}</a><h1 id="catch-title">{t.title}</h1><span class="heading-spacer" aria-hidden="true"></span></div>
-  <div class="catch-cabinet">
+  <div class="catch-cabinet" style={`--catch-props:url('${base}/images/games/jinjin-catch/props.png');--catch-characters:url('${base}/images/games/jinjin-catch/characters.png')`}>
     <div class="catch-hud">
       <div><span>{t.score}</span><strong data-catch-score>0</strong></div>
       <span class="hud-caption">JINJIN<br/><small data-catch-level>LEVEL 1</small></span>
       <div class="combo-counter"><span>{t.combo}</span><strong data-catch-combo>0 · ×1</strong></div>
       <div class="time-counter"><span>{t.time}</span><strong><span data-catch-time>30</span><small> s</small></strong></div>
     </div>
-    <div class="catch-field" role="group" aria-label={t.field} style={`background-image:url('${base}/images/jinjin-yard.svg')`}>
+    <div class="catch-field" role="group" aria-label={t.field} style={`background-image:url('${base}/images/jinjin-yard-painted.png')`}>
       <div class="catch-pots">{Array.from({length:9},(_,i) => <button class="catch-pot" type="button" data-pot={i} aria-label={t.hole.replace('{n}',String(i+1))} disabled><JinjinPot base={base}/><span class="pot-key" aria-hidden="true">{i+1}</span><span class="catch-pop" aria-hidden="true">{t.hit}</span></button>)}</div>
       <div class="catch-overlay">
-        <div class="catch-dialog"><span class="dialog-paw" aria-hidden="true">✦</span><h2 data-overlay-title>{t.ready}</h2><p data-overlay-body>{t.readyBody}</p><button type="button" data-catch-start disabled>{t.start} <span aria-hidden="true">→</span></button><noscript><p>{t.nojs}</p></noscript></div>
+        <div class="catch-dialog"><span class="dialog-paw" aria-hidden="true">✦</span><h2 data-overlay-title>{t.ready}</h2><p data-overlay-body>{t.readyBody}</p><div class="catch-character-guide">{({'ko':['진진이','백구','황구','흑구'],'en':['Jinjin','White','Golden','Black'],'ja':['ジンジン','白犬','黄犬','黒犬']}[lang]).map((name,i)=><span><i class={`guide-character guide-${i}`} aria-hidden="true"></i><small>{name}</small><b>{i === 0 ? '+100' : '−50'}</b></span>)}</div><button type="button" data-catch-start disabled>{t.start} <span aria-hidden="true">→</span></button><noscript><p>{t.nojs}</p></noscript></div>
       </div>
     </div>
     <div class="catch-toolbar"><p>{t.intro}</p><button type="button" data-catch-pause disabled>{t.pause} <span aria-hidden="true">Ⅱ</span></button></div>
@@ -46,7 +46,7 @@ const t = catchContent[lang];
   .time-counter.is-low { color:var(--accent); }
   .hud-caption { text-align:center; font-size:21px; font-weight:600; letter-spacing:.12em; line-height:1; color:#4f6150; }
   .hud-caption small { font-size:8px; letter-spacing:.1em; }
-  .catch-field { position:relative; aspect-ratio:1000/650; background-size:100% 100%; background-position:center; isolation:isolate; }
+  .catch-field { position:relative; aspect-ratio:1000/650; background-size:cover; background-position:center top; isolation:isolate; }
   .catch-pots { position:absolute; inset:23% 15% 4%; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); grid-template-rows:repeat(3,minmax(0,1fr)); gap:0 10%; }
   .catch-pot { position:relative; min-width:0; border:0; padding:0; background:none; cursor:pointer; touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
   .catch-pot:disabled { cursor:default; }
@@ -74,4 +74,41 @@ const t = catchContent[lang];
 <style>
   .combo-counter strong { font-size:21px; color:#526953; }
   @media(max-width:650px) { .hud-caption { display:block; font-size:11px; letter-spacing:.04em; } .catch-hud { gap:8px; } .combo-counter strong { font-size:18px; } }
+</style>
+
+<style>
+.catch-character-guide { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; margin-top:18px; }
+.catch-character-guide>span { display:grid; justify-items:center; gap:3px; }
+.guide-character { width:100%; aspect-ratio:1; display:block; background-image:var(--catch-characters); background-size:200% 200%; }
+.guide-1 { background-position:100% 0; }.guide-2 { background-position:0 100%; }.guide-3 { background-position:100% 100%; }
+.catch-character-guide small { font-size:10px; }.catch-character-guide b { font-size:10px; color:#a3482c; }
+.catch-dialog { width:min(400px,100%); border:2px solid #c8b698; background:#fffaf0; box-shadow:0 12px 0 #5c3b2714,0 20px 50px #3e352e22; }
+.catch-dialog button { background:#d84a2e; border-radius:30px; font-weight:600; }
+.hud-caption { background-image:var(--catch-props); background-size:200% 200%; background-position:100% 0; width:190px; padding-block:34px; font-size:18px; color:#542f1c; }
+.catch-hud { padding-block:4px; background:#f4e6ce; }
+.catch-pot.is-hit::after { content:''; position:absolute; width:60%; aspect-ratio:1; top:-15%; left:20%; background-image:var(--catch-props); background-size:200% 200%; background-position:100% 100%; pointer-events:none; animation:catch-score 500ms ease-out both; z-index:5; }
+.catch-pot[data-feedback="wrong"].is-hit::after { display:none; }
+.catch-pot[data-feedback="wrong"] .catch-pop { color:#aa442f; }
+.catch-pot[data-feedback="correct"] .catch-pop { color:#285e9b; }
+@media(max-width:650px) { .catch-hud { padding-block:14px; }.catch-character-guide { gap:4px; } }
+</style>
+<style>
+/* High-contrast, stable numeric HUD; artwork stays outside the reading area. */
+.catch-hud { display:grid; grid-template-columns:1fr 1.15fr 1fr; gap:12px; padding:16px; background:#302b24; }
+.catch-hud .hud-caption { display:none; }
+.catch-hud>div { min-width:0; min-height:88px; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:8px; padding:12px 8px; border:1px solid #dbc59e; border-radius:12px; background:#fff8e9; text-align:center; }
+.catch-hud div>span { font-size:13px; font-weight:700; line-height:1.3; color:#56432c; letter-spacing:0; }
+.catch-hud strong, .catch-hud .combo-counter strong { color:#302213; font-size:36px; line-height:1; font-weight:700; letter-spacing:-.035em; font-variant-numeric:tabular-nums; white-space:nowrap; }
+.catch-hud .time-counter { background:#f5d88d; }
+.catch-hud .time-counter strong { font-size:40px; }
+.catch-hud .time-counter.is-low { background:#a92e22; border-color:#ffae83; }
+.catch-hud .time-counter.is-low>span,.catch-hud .time-counter.is-low strong { color:#fff; }
+.catch-hud strong small { margin-left:4px; font-size:17px; }
+@media(max-width:650px) {
+ .catch-hud { padding:10px; gap:8px; }
+ .catch-hud>div { padding:10px 4px; min-height:76px; gap:8px; }
+ .catch-hud div>span { font-size:10px; }
+ .catch-hud strong,.catch-hud .combo-counter strong { font-size:25px; }
+ .catch-hud .time-counter strong { font-size:30px; }
+}
 </style>
