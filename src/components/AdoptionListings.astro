@@ -84,7 +84,7 @@ const checked = Number.isFinite(Date.parse(feed.fetchedAt)) ? new Intl.DateTimeF
   .listings-heading p { max-width:65ch; color:var(--muted); line-height:1.75; }
   .listings-heading > a { flex-shrink:0; }
   .adoption-cards { display:grid; grid-auto-flow:column; grid-auto-columns:calc((100% - 48px) / 3); gap:24px; overflow-x:auto; overscroll-behavior-x:contain; scroll-snap-type:x proximity; scrollbar-width:thin; scrollbar-color:var(--line) transparent; padding:4px 0 24px; }
-  .adoption-cards.is-moving { scroll-snap-type:none; }
+  .adoption-cards.is-moving, .adoption-cards.is-looping { scroll-snap-type:none; overflow-anchor:none; }
   .adoption-card { scroll-snap-align:start; }
   .adoption-photo { border-radius:10px; }
   .adoption-carousel-controls { display:flex; align-items:center; gap:24px; margin-top:18px; }
