@@ -20,7 +20,6 @@ const ui = {
   en: { title: ['Have you heard', 'of the Jindo?'], intro: 'Discover a story that began in Jindo, Korea.', button: 'Get to know the Jindo', photoTitle: 'The Return of Baekgu', photoCaption: 'Returned Baekgu statue', photoAlt: 'The Returned Baekgu statue, showing a dog and a person facing each other in a rural landscape', calligraphyAlt: 'Jindo written in Korean brush calligraphy', place: 'Jindo, Jeollanam-do', country: 'Jindo, South Korea', mapJindo: 'JINDO', mapKorea: 'KOREA', adoption: 'Adoption', prepare: 'Prepare for adoption', mapCredit: 'Map data source', akc: 'American Kennel Club — Korean Jindo Dog', ukc: 'United Kennel Club — Jindo breed standard' },
   ja: { title: ['珍島犬を', '知っていますか？'], intro: '韓国の珍島から始まった物語に出会ってみませんか。', button: '珍島犬を知る', photoTitle: '帰ってきた白狗', photoCaption: '帰ってきた白狗の像', photoAlt: '田園を背景に白い犬と人が向き合う「帰ってきた白狗」の像', calligraphyAlt: '韓国語で「珍島犬」と書かれた筆文字', place: '全羅南道・珍島', country: '韓国・珍島', mapJindo: '珍島', mapKorea: '韓国', adoption: '譲渡', prepare: '迎える準備を確認する', mapCredit: '地図データの出典', akc: 'American Kennel Club — 珍島犬の紹介', ukc: 'United Kennel Club — 珍島犬の犬種標準' },
 }[lang];
-const sections = ['story', 'adoption-listings'];
 const historyUrl = `${home}history/`;
 const gamesUrl = `${home}games/`;
 const pageSuffix = historyPage ? 'history/' : gamesPage ? 'games/' : '';
@@ -46,7 +45,7 @@ const canonical = new URL(pagePath, Astro.site);
     <a class="skip" href="#main">{t.skip}</a>
     <header class="header wrap">
       <a class="brand header-wordmark" href={home} aria-label="Jindo of Korea"><img class="brand-symbol" src={`${base}/images/jinjin-symbol-128.webp`} alt="" width="48" height="48" /><span class="brand-title">JINDO OF KOREA</span></a>
-      <nav class="desktop-nav" aria-label={t.menu}>{t.nav.map((label,i) => <a href={i === 0 ? historyUrl : `${home}#${sections[i]}`} aria-current={i === 0 && historyPage ? "page" : undefined}>{label}</a>)}<a href={gamesUrl} aria-current={gamesPage ? "page" : undefined}>{gamesContent[lang].title}</a></nav>
+      <nav class="desktop-nav" aria-label={t.menu}><a href={historyUrl} aria-current={historyPage ? "page" : undefined}>{t.nav[0]}</a><a href={gamesUrl} aria-current={gamesPage ? "page" : undefined}>{gamesContent[lang].title}</a></nav>
       <details class="language"><summary aria-label={t.language}><span aria-hidden="true">◎</span> {languages[lang]} <span aria-hidden="true">⌄</span></summary><div class="language-list">{Object.entries(languages).map(([code, label]) => <a href={`${base}/${code}/${pageSuffix}`} lang={code} hreflang={code} aria-current={code === lang ? 'page' : undefined}>{label}<span>{code === lang ? '✓' : ''}</span></a>)}</div></details>
     </header>
     <main id="main">
