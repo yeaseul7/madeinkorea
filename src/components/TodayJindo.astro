@@ -9,9 +9,9 @@ let cache = null;
 try { cache = JSON.parse(readFileSync(resolve(`.generated/videos-${lang}.json`), 'utf8')); } catch {}
 const videos = selectVideos(cache, lang);
 const t = {
-  ko: { title: '진돗개 관련 컨텐츠를 살펴보아요', intro: '진돗개의 다양한 모습을 영상으로 만나보세요.', play: '영상 재생', watch: 'YouTube에서 보기', empty: '잠시 쉬어가는 중이에요.', soon: '새로운 진돗개 영상을 곧 만나보세요.', note: '재생하면 YouTube에 연결됩니다. 영상과 자막은 원본에서 제공하는 언어로 재생됩니다.', terms: 'YouTube 이용약관', privacy: 'Google 개인정보처리방침' },
-  en: { title: 'Explore the world of Jindos', intro: 'Get to know the Jindo through stories, everyday moments, and videos.', play: 'Play video', watch: 'Watch on YouTube', empty: 'More Jindo moments, coming soon.', soon: 'Check back soon for new videos.', note: 'Playing connects to YouTube. Audio and captions use the languages available in the original video.', terms: 'YouTube Terms', privacy: 'Google Privacy Policy' },
-  ja: { title: '珍島犬のコンテンツを見てみましょう', intro: '動画を通して、珍島犬のさまざまな姿に出会ってみませんか。', play: '動画を再生', watch: 'YouTubeで見る', empty: 'ただいまひと休み中です。', soon: '新しい珍島犬の動画をお楽しみに。', note: '再生するとYouTubeに接続します。音声と字幕は元の動画で提供される言語です。', terms: 'YouTube利用規約', privacy: 'Googleプライバシーポリシー' },
+  ko: { title: '진돗개 관련 컨텐츠를 살펴보아요', intro: '진돗개의 다양한 모습을 영상으로 만나보세요.', play: '영상 재생', watch: 'YouTube에서 보기', empty: '잠시 쉬어가는 중이에요.', soon: '새로운 진돗개 영상을 곧 만나보세요.' },
+  en: { title: 'Explore the world of Jindos', intro: 'Get to know the Jindo through stories, everyday moments, and videos.', play: 'Play video', watch: 'Watch on YouTube', empty: 'More Jindo moments, coming soon.', soon: 'Check back soon for new videos.' },
+  ja: { title: '珍島犬のコンテンツを見てみましょう', intro: '動画を通して、珍島犬のさまざまな姿に出会ってみませんか。', play: '動画を再生', watch: 'YouTubeで見る', empty: 'ただいまひと休み中です。', soon: '新しい珍島犬の動画をお楽しみに。' },
 }[lang];
 ---
 <section id="todays-jindo" class="section wrap today-jindo" aria-labelledby="today-title">
@@ -28,7 +28,6 @@ const t = {
         <div class="today-caption"><p class="today-channel">{video.channel}</p><h3>{video.title}</h3><a href={`https://www.youtube.com/watch?v=${video.id}`} target="_blank" rel="noreferrer"><span class="today-watch-label"><svg class="youtube-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="#FF0000" d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8Z" /><path fill="#fff" d="m9.6 15.6 6.3-3.6-6.3-3.6z" /></svg><span>{t.watch}</span></span><span aria-hidden="true">↗</span></a></div>
       </article>)}
     </div>
-    <p class="today-note">{t.note} <a href="https://www.youtube.com/t/terms" target="_blank" rel="noreferrer">{t.terms}</a> · <a href="https://policies.google.com/privacy" target="_blank" rel="noreferrer">{t.privacy}</a></p>
   </div>}
   <div class="today-empty" hidden={videos.length > 0}><span class="today-empty-mark" aria-hidden="true">▷</span><div><h3>{t.empty}</h3><p>{t.soon}</p></div></div>
 </section>
@@ -93,8 +92,6 @@ const t = {
   .youtube-icon { display: block; flex-shrink: 0; }
   .today-caption > a:hover { color: var(--accent); }
   .today-caption > a > span:last-child { font-size: 19px; }
-  .today-note { max-width: 90ch; margin-top: 24px; font-size: 11px; line-height: 1.9; color: var(--muted); }
-  .today-note a { text-decoration: underline; text-underline-offset: 3px; }
   .today-empty { display: flex; align-items: center; gap: 30px; padding: clamp(28px,5vw,64px); border-radius: 12px; background: var(--surface); }
   .today-empty-mark { font-size: 48px; line-height: 1; color: var(--accent); }
   .today-empty h3 { font-size: 22px; margin-bottom: 8px; }
