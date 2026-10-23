@@ -41,7 +41,7 @@ const checked = Number.isFinite(Date.parse(feed.fetchedAt)) ? new Intl.DateTimeF
     <p class="adoption-provenance">{text.source} · {text.checked}: {checked} (KST)</p>
   </div>
   <p class="adoption-empty" hidden={animals.length > 0}>{text.empty}</p>
-  <div class="adoption-list-footer"><p>{text.note}</p><a class="text-link" href="#adoption">{text.prepare} ↓</a></div>
+  <div class="adoption-list-footer"><p>{text.note}</p></div>
 </section>
 <script>
   const results = document.querySelector<HTMLElement>('.adoption-results');

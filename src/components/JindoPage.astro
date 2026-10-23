@@ -90,7 +90,6 @@ const canonical = new URL(pagePath, Astro.site);
       {!historyPage && <>
       <section id="community" class="section wrap community-section"><p class="eyebrow">{ui.community}</p><h2>{t.communityTitle}</h2><p>{t.communityBody}</p></section>
       <AdoptionListings lang={lang} />
-      <section id="adoption" class="adoption section"><div class="wrap"><p class="eyebrow">{t.adoptionLabel}</p><h2>{t.adoptionTitle}</h2><p class="adoption-intro">{t.adoptionIntro}</p><div class="adoption-grid"><div class="checklist" data-ready={t.checked} data-pending={t.unchecked}><div class="check-progress"><span><strong id="check-count">0</strong> / 4 {t.progress}</span><button id="reset-checklist" type="button">{t.reset}</button></div><progress id="preparation-progress" max="4" value="0" aria-label={t.progress}></progress>{t.checks.map(label => <label class="check-row"><input type="checkbox" name="preparation" /><span>{label}</span></label>)}<p id="check-feedback" aria-live="polite">{t.unchecked}</p></div><aside class="rescue"><span class="rescue-icon" aria-hidden="true">↗</span><h3>{t.rescueTitle}</h3><p>{t.rescueBody}</p><a class="button light" href="https://www.koreank9rescue.org/adopt/" target="_blank" rel="noreferrer">{t.rescueLink}<span aria-hidden="true">↗</span></a><small>{t.rescueNote}</small></aside></div></div></section>
       <section class="section wrap faq"><h2>{t.faqTitle}</h2><div>{t.faqs.map(([q,a]) => <details><summary>{q}<span aria-hidden="true">+</span></summary><p>{a}</p></details>)}</div></section>
       </>}
     </main>
@@ -136,7 +135,7 @@ const canonical = new URL(pagePath, Astro.site);
       const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
       if ('IntersectionObserver' in window && !motionPreference.matches) {
         const targets = document.querySelectorAll<HTMLElement>(
-          '.section-copy, .section-heading, .trait, .life-list > article, .community-section, .listings-section, .adoption .wrap > h2, .adoption-intro, .adoption-grid > *, .faq > *, .archive-chapter > header, .chapter-grid > figure, .chapter-grid > .chapter-body, .record-layout > *, .origin-stories > section, .preservation-records > section'
+          '.section-copy, .section-heading, .trait, .life-list > article, .community-section, .listings-section, .faq > *, .archive-chapter > header, .chapter-grid > figure, .chapter-grid > .chapter-body, .record-layout > *, .origin-stories > section, .preservation-records > section'
         );
         const observer = new IntersectionObserver(entries => {
           entries.forEach(entry => {
@@ -157,20 +156,6 @@ const canonical = new URL(pagePath, Astro.site);
           if (event.matches) observer.disconnect();
         });
       }
-      const checklist = document.querySelector<HTMLElement>('.checklist');
-      const inputs = Array.from(document.querySelectorAll<HTMLInputElement>('input[name="preparation"]'));
-      const update = () => {
-        const count = inputs.filter(input => input.checked).length;
-        const counter = document.querySelector('#check-count');
-        const progress = document.querySelector<HTMLProgressElement>('#preparation-progress');
-        const feedback = document.querySelector('#check-feedback');
-        if (counter) counter.textContent = String(count);
-        if (progress) progress.value = count;
-        if (feedback) feedback.textContent = (count === inputs.length ? checklist?.dataset.ready : checklist?.dataset.pending) || '';
-      };
-      inputs.forEach(input => input.addEventListener('change', update));
-      document.querySelector('#reset-checklist')?.addEventListener('click', () => { inputs.forEach(input => input.checked = false); update(); });
-      update();
       document.querySelectorAll('a[href="#photo-credit"], a[href="#dog-photo-credit"]').forEach(link => link.addEventListener('click', () => {
         const credit = document.querySelector<HTMLDetailsElement>('#photo-credit');
         if (credit) credit.open = true;
