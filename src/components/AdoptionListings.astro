@@ -83,7 +83,8 @@ function breedLabel(breed: string) {
   .listings-actions { flex-shrink:0; max-width:100%; text-align:right; }
   .listings-actions .text-link { max-width:100%; }
   .listings-heading .external-note { margin-top:8px; font-size:12px; line-height:1.6; }
-  .adoption-cards { display:grid; grid-auto-flow:column; grid-auto-columns:calc((100% - 48px) / 3); gap:24px; overflow-x:auto; overscroll-behavior-x:contain; scroll-snap-type:x proximity; scrollbar-width:thin; scrollbar-color:var(--line) transparent; padding:4px 0 24px; }
+  .adoption-cards { display:grid; grid-auto-flow:column; grid-auto-columns:calc((100% - 48px) / 3); gap:24px; overflow-x:auto; overscroll-behavior-x:contain; scroll-snap-type:x proximity; scrollbar-width:none; padding:4px 0 24px; }
+  .adoption-cards::-webkit-scrollbar { display:none; width:0; height:0; }
   .adoption-cards.is-moving, .adoption-cards.is-looping { scroll-snap-type:none; overflow-anchor:none; }
   .adoption-card { scroll-snap-align:start; }
   .adoption-photo { border-radius:10px; }
