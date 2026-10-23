@@ -25,7 +25,7 @@ const t = {
             <span class="today-play" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M8 4v16l13-8z" /></svg></span>
           </button>
         </div>
-        <div class="today-caption"><p class="today-channel">{video.channel}</p><h3>{video.title}</h3><a href={`https://www.youtube.com/watch?v=${video.id}`} target="_blank" rel="noreferrer"><span>{t.watch}</span><span aria-hidden="true">↗</span></a></div>
+        <div class="today-caption"><p class="today-channel">{video.channel}</p><h3>{video.title}</h3><a href={`https://www.youtube.com/watch?v=${video.id}`} target="_blank" rel="noreferrer"><span class="today-watch-label"><svg class="youtube-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="#FF0000" d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8Z" /><path fill="#fff" d="m9.6 15.6 6.3-3.6-6.3-3.6z" /></svg><span>{t.watch}</span></span><span aria-hidden="true">↗</span></a></div>
       </article>)}
     </div>
     <p class="today-note">{t.note} <a href="https://www.youtube.com/t/terms" target="_blank" rel="noreferrer">{t.terms}</a> · <a href="https://policies.google.com/privacy" target="_blank" rel="noreferrer">{t.privacy}</a></p>
@@ -89,6 +89,8 @@ const t = {
   .today-caption h3 { margin: 0 0 24px; font-size: 17px; font-family: inherit; font-weight: 600; line-height: 1.65; letter-spacing: -.025em; word-break: keep-all; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
   .today-channel { font-size: 12px; color: var(--muted); line-height: 1.6; margin: 0 0 9px; overflow-wrap: anywhere; }
   .today-caption > a { display: flex; align-items: center; justify-content: space-between; gap: 16px; font-size: 12px; margin-top: auto; padding-top: 15px; border-top: 1px solid color-mix(in srgb, var(--line) 50%, transparent); }
+  .today-watch-label { display: inline-flex; align-items: center; gap: 8px; }
+  .youtube-icon { display: block; flex-shrink: 0; }
   .today-caption > a:hover { color: var(--accent); }
   .today-caption > a > span:last-child { font-size: 19px; }
   .today-note { max-width: 90ch; margin-top: 24px; font-size: 11px; line-height: 1.9; color: var(--muted); }
