@@ -29,6 +29,8 @@ export function setupJinjinCatch() {
     time.closest('.time-counter')?.classList.toggle('is-low', state.remaining <= 5000);
     pots.forEach((pot, index) => {
       const target = state.targets.find(target => target.index === index);
+      const leaving = state.retiring.find(target => target.index === index);
+      pot.classList.toggle('is-leaving', Boolean(leaving));
       pot.classList.toggle('is-up', Boolean(target));
       pot.classList.toggle('is-fake', Boolean(target?.fake));
       if (target) pot.dataset.kind = target.kind;

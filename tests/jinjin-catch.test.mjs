@@ -37,7 +37,7 @@ test('expired targets and clicks at the deadline never score',()=>{
  assert.equal(game.hit(first(game).index,30000),false);assert.equal(game.state().score,0);
 });
 test('concurrent targets can each be caught; catching one leaves the others untouched',()=>{
- const game=createCatchGame(()=>.4);game.start(0);game.tick(10000);game.tick(10270);game.tick(10540);
+ const game=createCatchGame(()=>.2);game.start(0);game.tick(10000);game.tick(10270);game.tick(10540);
  const targets=game.state().targets;assert.equal(targets.length,3);
  targets.forEach(t=>assert.equal(game.hit(t.index,10541),true));
  assert.equal(game.state().score,300);assert.equal(game.state().combo,3);assert.deepEqual(game.state().targets,[]);
@@ -86,4 +86,29 @@ test('large clock jumps do not replay expired spawns or overflow jars',()=>{
  const game=createCatchGame(()=>.4);game.start(0);game.tick(400);
  const state=game.tick(27000);assert.equal(state.level,6);assert.equal(state.targets.length,1);
  assert.equal(first(game).appeared,27000);
+});
+
+test('a hit retires immediately, cannot score twice, and reserves its jar during the exit',()=>{
+ const game=createCatchGame(()=>0);game.start(0);game.tick(25000);
+ const target=first(game);assert.equal(game.hit(target.index,25001),true);
+ assert.ok(!game.state().targets.some(t=>t.id===target.id));
+ assert.equal(game.state().retiring[0].id,target.id);
+ assert.equal(game.hit(target.index,25002),false);
+ for(let now=25003;now<25161;now++){
+  game.tick(now);assert.ok(!game.state().targets.some(t=>t.index===target.index));
+ }
+ game.tick(25161);assert.ok(!game.state().retiring.some(t=>t.id===target.id));
+});
+test('clicking an empty jar never hits a new target spawned by the same event',()=>{
+ const game=createCatchGame(()=>0);game.start(0);
+ assert.equal(game.hit(0,400),false);assert.equal(game.state().score,0);
+ assert.equal(game.hit(0,401),true);
+});
+test('active and retiring appearances never overlap, even under rapid clicking',()=>{
+ const game=createCatchGame(()=>.3);game.start(0);
+ for(let now=0;now<30000;now+=10){
+  const s=game.tick(now);const occupied=[...s.targets,...s.retiring];
+  assert.equal(new Set(occupied.map(t=>t.index)).size,occupied.length);
+  for(const t of s.targets)game.hit(t.index,now);
+ }
 });
