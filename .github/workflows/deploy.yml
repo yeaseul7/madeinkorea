@@ -25,6 +25,8 @@ jobs:
         id: pages
       - run: npm ci
       - run: npm test
+      - name: Collect latest Kkosunnae adoption listings
+        run: npm run adoptions:collect
       - name: Collect and publish YouTube videos
         run: node scripts/youtube.mjs collect
         env:

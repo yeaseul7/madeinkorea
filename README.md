@@ -26,7 +26,7 @@ npm run preview
 - `src/styles/global.css`: 반응형 스타일.
 - `public/images/jinjin.png`: 라이선스를 확인한 실제 진돗개 사진.
 - 체크리스트는 현재 페이지에서만 동작하며 개인정보를 수집하지 않음.
-- Korean K9 Rescue는 외부 참고 링크이며 제휴 관계가 아님. 개별 입양 공고를 복제하거나 가상의 모집을 표시하지 않음.
+- Korean K9 Rescue는 외부 참고 링크이며 제휴 관계가 아님. 입양 공고는 꼬순내 공개 검색 결과를 사용하며 가상의 모집을 표시하지 않음.
 
 ## GitHub Pages 배포
 
@@ -48,6 +48,17 @@ npm run preview
 직접 빌드할 때 `SITE_URL`, `BASE_PATH` 환경변수로 도메인과 하위 경로를 지정할 수 있습니다. 저장소 정보가 없는 로컬 빌드의 canonical 도메인은 example.com입니다. 배포 시 워크플로가 실제 주소로 교체합니다.
 
 ## 콘텐츠 및 출처
+
+### 입양 공고 — 꼬순내 일반 검색
+
+- 원본: `yeaseul7/Foryoutail`의 `lib/domain/shelter/shelter-animals.ts`와 `app/api/shelter-data/route.ts`.
+- 저장 구조: 공공데이터 → 꼬순내 Supabase `animals`(공고), `shelters`(보호소). 이 사이트는 DB에 직접 접속하거나 관리자 키를 사용하지 않습니다.
+- 공개 API: `https://matchichi.com/api/shelter-data?searchQuery=진도&upkind=417000&sort=notice&pageNo=1&numOfRows=6`.
+- 일반 검색은 `rfid_cd`, `happen_place`, `care_addr`, `care_nm`, `kind_nm`, `kind_full_nm`, `special_mark`의 부분 일치입니다. AI 의미 검색이 아니며, 진도 믹스와 지역명 일치도 포함됩니다.
+- 상태 `notice`·`protect`인 개 공고만 표시합니다. 공고 시작일 `notice_start_date`(응답의 `noticeSdt`) 내림차순이며, DB 동기화 시간 `updated_at` 기준이 아닙니다. 같은 날짜 안의 순서는 원본 API 순서를 유지합니다.
+- `npm run adoptions:collect`로 최대 6건을 `.generated/adoptions.json`에 저장합니다. `npm run dev`와 매일 09:37 KST의 기존 배포 작업에서도 수집합니다. 수동 빌드 전에 최신 데이터가 필요하면 수집 명령을 실행하세요.
+- 실제 공고 데이터는 Git에 커밋하지 않습니다. 수집 실패 시 목록을 비우고 원본 링크를 표시하며, 수집 후 48시간이 지난 목록은 화면에서 숨깁니다. 브라우저가 꼬순내 API를 직접 호출하지 않아 CORS 설정이나 새 서버가 필요 없습니다.
+- 한·영·일 UI를 제공하며 보호소명·지역·특징 등 원본 기록은 한국어로 유지합니다. 상세 링크는 꼬순내 `/shelter/{desertionNo}`입니다. 보호 중 상태만으로 입양 또는 해외 입양 가능 여부를 확정하지 않습니다.
 
 ### 오늘의 진돗개 — 자동 영상 목록
 
