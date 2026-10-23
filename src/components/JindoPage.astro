@@ -1,6 +1,8 @@
 ---
 import BaekguComic from './BaekguComic.astro';
 import JinjinGames from './JinjinGames.astro';
+import JinjinCatch from './JinjinCatch.astro';
+import { catchContent } from '../data/jinjin-catch';
 import { gamesContent } from '../data/games';
 import TodayJindo from './TodayJindo.astro';
 import AdoptionListings from './AdoptionListings.astro';
@@ -8,8 +10,8 @@ import { content, languages, type Language } from '../data/content';
 import '../styles/global.css';
 import { history, historySources } from '../data/history';
 import { chapters, noticeUrl } from '../data/history-chapters';
-interface Props { lang: Language; historyPage?: boolean; gamesPage?: boolean; }
-const { lang, historyPage = false, gamesPage = false } = Astro.props;
+interface Props { lang: Language; historyPage?: boolean; gamesPage?: boolean; catchPage?: boolean; }
+const { lang, historyPage = false, gamesPage = false, catchPage = false } = Astro.props;
 const t = content[lang];
 const h = history[lang];
 const c = chapters[lang];
@@ -22,10 +24,10 @@ const ui = {
 }[lang];
 const historyUrl = `${home}history/`;
 const gamesUrl = `${home}games/`;
-const pageSuffix = historyPage ? 'history/' : gamesPage ? 'games/' : '';
+const pageSuffix = historyPage ? 'history/' : catchPage ? 'games/catch/' : gamesPage ? 'games/' : '';
 const pagePath = `${home}${pageSuffix}`;
-const pageTitle = historyPage ? t.nav[0] : gamesPage ? gamesContent[lang].title : t.title;
-const pageDescription = gamesPage ? gamesContent[lang].intro : t.description;
+const pageTitle = historyPage ? t.nav[0] : catchPage ? catchContent[lang].title : gamesPage ? gamesContent[lang].title : t.title;
+const pageDescription = catchPage ? catchContent[lang].intro : gamesPage ? gamesContent[lang].intro : t.description;
 const canonical = new URL(pagePath, Astro.site);
 ---
 <!doctype html>
@@ -41,16 +43,16 @@ const canonical = new URL(pagePath, Astro.site);
     <meta property="og:type" content="website" /><meta property="og:url" content={canonical} />
     <meta property="og:image" content={new URL(`${base}/images/returned-baekgu.png`, Astro.site)} />
   </head>
-  <body id="top" class:list={{ "history-page": historyPage, "games-page": gamesPage }}>
+  <body id="top" class:list={{ "history-page": historyPage, "games-page": gamesPage || catchPage }}>
     <a class="skip" href="#main">{t.skip}</a>
     <header class="header wrap">
       <a class="brand header-wordmark" href={home} aria-label="Jindo of Korea"><img class="brand-symbol" src={`${base}/images/jinjin-symbol-128.webp`} alt="" width="48" height="48" /><span class="brand-title">JINDO OF KOREA</span></a>
-      <nav class="desktop-nav" aria-label={t.menu}><a href={historyUrl} aria-current={historyPage ? "page" : undefined}>{t.nav[0]}</a><a href={gamesUrl} aria-current={gamesPage ? "page" : undefined}>{gamesContent[lang].title}</a></nav>
+      <nav class="desktop-nav" aria-label={t.menu}><a href={historyUrl} aria-current={historyPage ? "page" : undefined}>{t.nav[0]}</a><a href={gamesUrl} aria-current={gamesPage || catchPage ? "page" : undefined}>{gamesContent[lang].title}</a></nav>
       <details class="language"><summary aria-label={t.language}><span aria-hidden="true">◎</span> {languages[lang]} <span aria-hidden="true">⌄</span></summary><div class="language-list">{Object.entries(languages).map(([code, label]) => <a href={`${base}/${code}/${pageSuffix}`} lang={code} hreflang={code} aria-current={code === lang ? 'page' : undefined}>{label}<span>{code === lang ? '✓' : ''}</span></a>)}</div></details>
     </header>
     <main id="main">
-      {gamesPage && <JinjinGames lang={lang} base={base} />}
-      {!historyPage && !gamesPage && <>
+      {catchPage ? <JinjinCatch lang={lang} base={base} /> : gamesPage && <JinjinGames lang={lang} base={base} />}
+      {!historyPage && !gamesPage && !catchPage && <>
       <div class="hero-scene coastal-hero">
 
         <section class="hero wrap" aria-labelledby="hero-title">
@@ -92,7 +94,7 @@ const canonical = new URL(pagePath, Astro.site);
         <details class="history-sources"><summary>{h.sourcesTitle}</summary><ul>{Object.values(historySources).map((url,i) => <li><a href={url} target="_blank" rel="noreferrer">{h.sourceNames[i]} ↗</a></li>)}</ul></details>
       </section>
       </>}
-      {!historyPage && !gamesPage && <>
+      {!historyPage && !gamesPage && !catchPage && <>
       <AdoptionListings lang={lang} />
       <section class="section wrap faq"><h2>{t.faqTitle}</h2><div>{t.faqs.map(([q,a]) => <details><summary>{q}<span aria-hidden="true">+</span></summary><p>{a}</p></details>)}</div></section>
       </>}

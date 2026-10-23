@@ -1,0 +1,80 @@
+---
+import type { Language } from '../data/content';
+import { catchContent } from '../data/jinjin-catch';
+import JinjinPot from './JinjinPot.astro';
+interface Props { lang: Language; base: string; }
+const { lang, base } = Astro.props;
+const t = catchContent[lang];
+---
+<section class="catch-game wrap" id="jinjin-catch" aria-labelledby="catch-title" data-copy={JSON.stringify(t)}>
+  <div class="catch-heading"><a href={`${base}/${lang}/games/`}>← {t.back}</a><h1 id="catch-title">{t.title}</h1><span class="heading-spacer" aria-hidden="true"></span></div>
+  <div class="catch-cabinet">
+    <div class="catch-hud">
+      <div><span>{t.score}</span><strong data-catch-score>0</strong></div>
+      <span class="hud-caption" aria-hidden="true">JINJIN<br/><small>COUNTRY YARD</small></span>
+      <div class="combo-counter"><span>{t.combo}</span><strong data-catch-combo>0 · ×1</strong></div>
+      <div class="time-counter"><span>{t.time}</span><strong><span data-catch-time>30</span><small> s</small></strong></div>
+    </div>
+    <div class="catch-field" role="group" aria-label={t.field} style={`background-image:url('${base}/images/jinjin-yard.svg')`}>
+      <div class="catch-pots">{Array.from({length:9},(_,i) => <button class="catch-pot" type="button" data-pot={i} aria-label={t.hole.replace('{n}',String(i+1))} disabled><JinjinPot base={base}/><span class="pot-key" aria-hidden="true">{i+1}</span><span class="catch-pop" aria-hidden="true">{t.hit}</span></button>)}</div>
+      <div class="catch-overlay">
+        <div class="catch-dialog"><span class="dialog-paw" aria-hidden="true">✦</span><h2 data-overlay-title>{t.ready}</h2><p data-overlay-body>{t.readyBody}</p><button type="button" data-catch-start disabled>{t.start} <span aria-hidden="true">→</span></button><noscript><p>{t.nojs}</p></noscript></div>
+      </div>
+    </div>
+    <div class="catch-toolbar"><p>{t.intro}</p><button type="button" data-catch-pause disabled>{t.pause} <span aria-hidden="true">Ⅱ</span></button></div>
+  </div>
+  <p class="catch-help catch-rules">{t.rules}</p>
+  <p class="catch-help">{t.hint}</p><p class="visually-hidden" data-catch-announcement aria-live="polite" aria-atomic="true"></p>
+</section>
+<script>
+  import { setupJinjinCatch } from '../scripts/jinjin-catch';
+  setupJinjinCatch();
+</script>
+<style>
+  :global(.games-page #main) { background:#fff; }
+  .catch-game { padding-block:28px 56px; max-width:1000px; }
+  .catch-heading { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:22px; }
+  .catch-heading a { color:var(--muted); font-size:13px; }
+  .catch-heading h1 { font-family:inherit; font-size:20px; line-height:1.5; font-weight:600; letter-spacing:-.03em; }
+  .heading-spacer { width:90px; }
+  .catch-cabinet { overflow:hidden; border:1px solid #ded5c4; border-radius:14px; background:#faf7ee; }
+  .catch-hud { display:flex; justify-content:space-between; align-items:center; padding:16px 28px; gap:20px; background:#fcfaf3; }
+  .catch-hud>div { min-width:90px; display:grid; gap:3px; }
+  .catch-hud div>span { font-size:11px; color:#6a675d; }
+  .catch-hud strong { font-size:30px; line-height:1.2; font-variant-numeric:tabular-nums; font-weight:600; }
+  .catch-hud strong small { font-size:13px; font-weight:400; }
+  .time-counter { text-align:right; }
+  .time-counter.is-low { color:var(--accent); }
+  .hud-caption { text-align:center; font-size:21px; font-weight:600; letter-spacing:.12em; line-height:1; color:#4f6150; }
+  .hud-caption small { font-size:8px; letter-spacing:.1em; }
+  .catch-field { position:relative; aspect-ratio:1000/650; background-size:100% 100%; background-position:center; isolation:isolate; }
+  .catch-pots { position:absolute; inset:23% 15% 4%; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); grid-template-rows:repeat(3,minmax(0,1fr)); gap:0 10%; }
+  .catch-pot { position:relative; min-width:0; border:0; padding:0; background:none; cursor:pointer; touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
+  .catch-pot:disabled { cursor:default; }
+  .catch-pot:focus-visible { outline:2px dashed #70472f; outline-offset:2px; border-radius:14px; }
+  .pot-key { position:absolute; z-index:4; bottom:14%; left:0; right:0; text-align:center; font-size:11px; color:#e3ccb0a6; pointer-events:none; }
+  .catch-pop { position:absolute; z-index:4; left:50%; top:4%; color:#b74332; background:#fff9e9; border-radius:50%; padding:5px 8px; font-size:20px; font-weight:700; transform:translate(-50%,0); opacity:0; pointer-events:none; }
+  .is-hit .catch-pop { animation:catch-score 500ms ease-out both; }
+  .catch-overlay { position:absolute; inset:0; z-index:5; display:grid; place-items:center; padding:20px; background:#4e51393a; backdrop-filter:blur(2px); }
+  .catch-overlay[hidden] { display:none; }
+  .catch-dialog { width:min(360px,100%); padding:30px; border:1px solid #fff8; border-radius:18px; background:#fffdf5f5; text-align:center; box-shadow:0 14px 45px #3e352e1a; }
+  .dialog-paw { display:block; color:#b74332; font-size:25px; margin-bottom:12px; }
+  .catch-dialog h2 { font-family:inherit; font-size:25px; font-weight:600; letter-spacing:-.04em; line-height:1.4; }
+  .catch-dialog p { margin-top:12px; color:#68675e; font-size:14px; line-height:1.8; }
+  .catch-dialog button { display:flex; justify-content:space-between; align-items:center; width:100%; margin-top:24px; padding:14px 20px; border:0; border-radius:9px; background:#526953; color:#fff; font:inherit; font-size:14px; cursor:pointer; }
+  .catch-dialog button:disabled { opacity:.5; cursor:default; }
+  .catch-toolbar { display:flex; justify-content:space-between; align-items:center; gap:16px; padding:16px 24px; }
+  .catch-toolbar p { color:#68675e; font-size:13px; line-height:1.7; }
+  .catch-toolbar button { flex-shrink:0; padding:10px 14px; min-height:44px; background:transparent; border:1px solid #d6d0bf; border-radius:8px; color:#526953; font:inherit; font-size:12px; cursor:pointer; }
+  .catch-toolbar button:disabled { opacity:.4; cursor:default; }
+  .catch-help { text-align:center; color:var(--muted); font-size:12px; line-height:1.7; margin-top:18px; }
+  @keyframes catch-score { 0% { opacity:1; transform:translate(-50%,4px); } 100% { opacity:0; transform:translate(-50%,-22px); } }
+  @media(max-width:650px) { .catch-heading { gap:10px; } .catch-heading h1 { font-size:18px; } .heading-spacer { display:none; } .catch-hud { padding:14px 18px; } .catch-hud>div { min-width:65px; } .catch-hud strong { font-size:25px; } .hud-caption { font-size:17px; } .catch-field { aspect-ratio:3/4; } .catch-pots { inset:25% 8% 5%; gap:2% 5%; } .catch-toolbar { padding:12px 16px; align-items:start; } .catch-toolbar p { font-size:12px; } .catch-dialog { padding:24px; } .catch-dialog h2 { font-size:22px; } .pot-key { font-size:9px; } }
+  @media(hover:none) { .pot-key { display:none; } }
+  @media(prefers-reduced-motion:reduce) { .is-hit .catch-pop { animation:none; opacity:1; } }
+</style>
+<style>
+  .combo-counter strong { font-size:21px; color:#526953; }
+  .catch-rules { max-width:70ch; margin-inline:auto; }
+  @media(max-width:650px) { .hud-caption { display:none; } .catch-hud { gap:12px; } .combo-counter strong { font-size:18px; } }
+</style>

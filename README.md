@@ -101,3 +101,11 @@ Google Fonts를 외부에서 로드하며, 로드되지 않으면 시스템 글�
 ## Current background photo
 
 Jindo Bridge, USAG Humphreys, 2010-10-09. Original: https://commons.wikimedia.org/wiki/File:Haenam_Where_nature_meets_history,_culture.jpg (2100×1396), CC BY 2.0: https://creativecommons.org/licenses/by/2.0/. WebP conversion to 1024px and 2100px responsive variants, with CSS cropping and overlays. Attribution and original/license links appear in the footer. This replaces the previous low-resolution user-provided background.
+
+### 진진게임 — 진진잡기
+
+- `/{lang}/games/`는 현재 진진잡기 카드 하나만 표시하는 목록입니다. 선택하면 `/{lang}/games/catch/`로 이동합니다.
+- 시골 마당의 옹기 9개에서 올라오는 진진이를 30초 동안 클릭·터치하거나 숫자키 1–9로 잡습니다. 한 번 잡으면 1점이며, 같은 출현에 중복 점수를 주지 않습니다.
+- 일시정지·재시작을 지원하고 탭을 벗어나면 자동으로 일시정지합니다. 모션 줄이기 설정을 존중합니다. 점수는 현재 게임 안에서만 유지됩니다.
+- `src/scripts/jinjin-catch-engine.mjs`: 제한 시간·출현·득점 상태. `src/scripts/jinjin-catch.ts`: 화면과 입력 연결.
+- `src/components/JinjinPot.astro`의 항아리와 `public/images/jinjin-yard.svg`의 배경을 목록·게임에서 함께 사용합니다.

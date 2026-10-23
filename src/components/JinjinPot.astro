@@ -1,0 +1,28 @@
+---
+interface Props { base: string; }
+const { base } = Astro.props;
+---
+<span class="pot-art" aria-hidden="true">
+  <span class="pot-shadow"></span><span class="pot-mouth"></span>
+  <span class="dog-window"><img class="pot-dog" src={`${base}/images/jinjin-symbol.png`} alt="" width="160" height="160" draggable="false" /><svg class="pot-dog decoy-dog" viewBox="0 0 160 170"><path d="M28 72 22 10 65 42H95L138 10 132 72" fill="var(--fur)" stroke="#6b594b" stroke-width="3" stroke-linejoin="round"/><path d="m32 28 7 32 17-12m70-20-7 32-17-12" fill="#cda58e"/><path d="M26 88q-1-52 54-52t54 52l-6 38q-4 36-48 36t-48-36z" fill="var(--fur)"/><ellipse cx="80" cy="123" rx="38" ry="32" fill="var(--muzzle)"/><g fill="#28251f"><ellipse cx="52" cy="83" rx="5" ry="6"/><ellipse cx="108" cy="83" rx="5" ry="6"/><path d="M68 110q12-5 24 0-2 14-12 14t-12-14"/></g><path d="M80 122v13m-14-1q14 12 28 0" fill="none" stroke="#514237" stroke-width="3" stroke-linecap="round"/></svg></span>
+  <svg class="pot-body" viewBox="0 0 220 190" preserveAspectRatio="none"><path d="M30 12Q110 30 190 12C196 36 215 56 215 98C215 158 182 185 110 185S5 158 5 98C5 56 24 36 30 12Z" fill="#65351f" stroke="#482517" stroke-width="3"/><path d="M168 20Q199 58 188 108Q175 149 139 158Q205 165 213 105Q220 64 190 12Z" fill="#452115"/><path d="M9 113Q29 139 49 130L63 141 76 135 89 146 106 139 119 151 133 135Q145 126 151 148L161 156Q180 149 195 133L209 126Q196 183 110 184Q28 184 9 113Z" fill="#985442"/><path d="M13 130Q36 161 77 166Q151 188 200 147Q178 187 108 185Q32 184 13 130Z" fill="#7d4030"/><path d="m30 45 17 5-10 25-15-5zm23 7 8 2-9 25-8-3z" fill="#b17b5e" opacity=".75"/><path d="M43 25Q101 39 177 25" fill="none" stroke="#3d1e13" stroke-width="3"/></svg><span class="pot-lip"></span>
+</span>
+<style>
+  .pot-art { position:absolute; inset:0 10%; display:block; pointer-events:none; }
+  .pot-shadow { position:absolute; left:7%; right:7%; bottom:0; height:13%; border-radius:50%; background:#59402a30; filter:blur(3px); }
+  .pot-mouth { position:absolute; left:9%; right:9%; top:37%; height:17%; border-radius:50%; background:radial-gradient(ellipse at center,#35170d 52%,#582b18 54%,#7b4930 69%,#4b2617 73%); box-shadow:inset 0 2px 0 #a46b48; }
+  .dog-window { position:absolute; left:5%; right:5%; top:0; bottom:52%; overflow:hidden; z-index:1; }
+  .pot-dog { display:block; position:absolute; width:88%; height:100%; left:6%; bottom:-4%; object-fit:contain; object-position:center bottom; transform:translateY(108%); transition:transform 140ms ease-out; }
+  :global(.is-up) .pot-dog { transform:translateY(0); }
+  .pot-body { position:absolute; top:44%; bottom:2%; left:5%; width:90%; height:54%; z-index:2; overflow:visible; }
+  .pot-lip { position:absolute; left:9%; right:9%; top:40%; height:12%; border-radius:50%; border-bottom:7px solid #75442b; box-shadow:0 3px 0 #482517; z-index:3; }
+  @media(prefers-reduced-motion:reduce) { .pot-dog { transition:none; } }
+</style>
+
+<style>
+.decoy-dog { display:none; --fur:#c79658; --muzzle:#f5e4c6; }
+:global([data-kind="gold"]) .dog-window img,:global([data-kind="white"]) .dog-window img,:global([data-kind="black"]) .dog-window img { display:none; }
+:global([data-kind="gold"]) .decoy-dog,:global([data-kind="white"]) .decoy-dog,:global([data-kind="black"]) .decoy-dog { display:block; }
+:global([data-kind="white"]) .decoy-dog { --fur:#fff6e8; --muzzle:#efe5d2; }
+:global([data-kind="black"]) .decoy-dog { --fur:#42423d; --muzzle:#b4ab98; }
+</style>

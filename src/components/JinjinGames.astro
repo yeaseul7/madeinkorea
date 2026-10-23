@@ -1,53 +1,38 @@
 ---
 import type { Language } from '../data/content';
-import JinjinCatch from './JinjinCatch.astro';
+import JinjinPot from './JinjinPot.astro';
 import { gamesContent } from '../data/games';
 interface Props { lang: Language; base: string; }
 const { lang, base } = Astro.props;
 const t = gamesContent[lang];
-const symbol = `${base}/images/jinjin-symbol-128.webp`;
 ---
 <section class="games wrap" aria-labelledby="games-title">
   <h1 class="games-label" id="games-title">{t.label}</h1>
   <ul class="game-list">
-    {t.games.map(game => <li class="game-card">
-      <div class:list={['game-cover', `cover-${game.id}`]} aria-hidden="true">
-        {game.id === 'quiz' && <div class="quiz-art"><span class="quiz-sheet"><img src={symbol} alt="" width="100" height="100" /></span><span class="question">?</span><span class="quiz-answer">✓</span></div>}
-        {game.id === 'memory' && <div class="memory-art">{[true, false, false, true].map(face => <span class:list={['memory-tile', { 'face-up': face }]}>{face ? <img src={symbol} alt="" width="72" height="72" /> : <span>J</span>}</span>)}</div>}
-        {game.id === 'puzzle' && <div class="puzzle-art">{[0, 1, 2, 3].map(piece => <span class={`puzzle-piece piece-${piece}`} style={`--piece-image: url('${symbol}')`}></span>)}</div>}
+    {t.games.map(game => <li><a class="game-card" href={`${base}/${lang}/games/${game.id}/`}>
+      <div class="game-cover" aria-hidden="true" style={`background-image:url('${base}/images/jinjin-yard.svg')`}>
+        <div class="preview-pots">{[false,true,false].map(up => <span class:list={['preview-pot',{'is-up':up}]}><JinjinPot base={base} /></span>)}</div>
       </div>
-      <div class="game-body"><span class="game-category">{game.category}</span><h2>{game.title}</h2><p>{game.description}</p><button type="button" disabled aria-label={`${game.title} · ${t.soon}`}>{t.soon}<span aria-hidden="true">↗</span></button></div>
-    </li>)}
+      <div class="game-caption"><h2>{game.title}</h2><span aria-hidden="true">↗</span></div>
+    </a></li>)}
   </ul>
 </section>
 <style>
   :global(.games-page #main) { background:#fff; }
-  .games { padding-block:32px clamp(56px,7vw,88px); }
-  .games-label { display:inline-block; margin-bottom:24px; font-family:inherit; font-size:14px; font-weight:500; letter-spacing:0; line-height:1.5; color:var(--muted); }
-  .game-list { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px; list-style:none; margin:0; padding:0; }
-  .game-card { overflow:hidden; border:1px solid color-mix(in srgb,var(--line) 65%,transparent); border-radius:16px; background:#fff; display:flex; flex-direction:column; }
-  .game-cover { height:240px; display:grid; place-items:center; overflow:hidden; }
-  .cover-quiz { background:#eaded0; }
-  .cover-memory { background:#e3e5dc; }
-  .cover-puzzle { background:#e8dfd9; }
-  .game-body { padding:26px; display:flex; flex-direction:column; flex:1; }
-  .game-category { color:var(--accent); font-size:12px; font-weight:500; }
-  .game-body h2 { font-family:inherit; font-weight:600; font-size:25px; line-height:1.4; letter-spacing:-.035em; margin-top:10px; }
-  .game-body p { margin:12px 0 28px; color:var(--muted); font-size:15px; line-height:1.8; }
-  .game-body button { display:flex; justify-content:space-between; align-items:center; width:100%; min-height:46px; margin-top:auto; padding:10px 16px; border:0; border-radius:8px; background:var(--surface); color:var(--muted); font-size:13px; cursor:default; }
-  .quiz-art { position:relative; width:190px; height:170px; }
-  .quiz-sheet { position:absolute; left:8px; top:12px; width:125px; height:150px; display:grid; place-items:center; border-radius:12px; background:#fcfaf6; transform:rotate(-12deg); box-shadow:0 8px 16px #292a270c; }
-  .question { position:absolute; right:0; top:0; display:grid; place-items:center; width:80px; height:80px; border-radius:50%; background:var(--accent); color:var(--paper); font-size:52px; font-weight:500; transform:rotate(12deg); }
-  .quiz-answer { position:absolute; bottom:0; right:20px; font-size:42px; color:var(--ink); transform:rotate(-8deg); }
-  .memory-art { display:grid; grid-template-columns:repeat(2,76px); gap:10px; transform:rotate(-8deg); }
-  .memory-tile { display:grid; place-items:center; width:76px; height:86px; background:#858a76; border:4px solid #fcfaf6; border-radius:8px; color:#fcfaf6; box-shadow:0 5px 12px #292a270c; }
-  .memory-tile>span { font-size:34px; font-family:var(--serif); }
-  .memory-tile.face-up { background:#fcfaf6; }
-  .puzzle-art { display:grid; grid-template-columns:repeat(2,82px); gap:5px; transform:rotate(6deg); }
-  .puzzle-piece { width:82px; height:82px; border-radius:6px; background-color:#fcfaf6; background-image:var(--piece-image); background-size:164px 164px; background-repeat:no-repeat; box-shadow:0 5px 12px #292a270c; }
-  .piece-1 { background-position:right top; }
-  .piece-2 { background-position:left bottom; }
-  .piece-3 { background-position:right bottom; transform:translate(12px,10px) rotate(10deg); }
-  @media(max-width:1000px) { .game-list { gap:16px; } .game-body { padding:20px; } .game-cover { height:210px; } .game-body h2 { font-size:22px; } }
-  @media(max-width:760px) { .game-list { grid-template-columns:1fr; gap:24px; } .game-cover { height:220px; } .game-body { padding:24px; } }
+  .games { padding-block:32px 80px; min-height:65svh; }
+  .games-label { margin-bottom:24px; font-family:inherit; font-size:14px; font-weight:500; letter-spacing:0; line-height:1.5; color:var(--muted); }
+  .game-list { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:24px; list-style:none; margin:0; padding:0; }
+  .game-card { display:block; border:1px solid #e8e8e4; background:#fff; border-radius:4px; overflow:hidden; transition:box-shadow .2s; }
+  .game-card:hover { box-shadow:0 5px 18px #292a2712; }
+  .game-cover { position:relative; aspect-ratio:16/10; background-size:cover; background-position:center; overflow:hidden; }
+  .preview-pots { position:absolute; inset:26% 12% 10%; display:flex; gap:7%; align-items:end; }
+  .preview-pot { position:relative; display:block; width:29%; height:95%; }
+  .preview-pot:nth-child(2) { margin-bottom:8%; }
+  .game-caption { display:flex; justify-content:space-between; align-items:center; padding:14px 16px; gap:12px; }
+  .game-caption h2 { font-family:inherit; font-size:15px; font-weight:500; line-height:1.5; letter-spacing:0; }
+  .game-caption>span { color:var(--muted); font-size:14px; }
+  @media(max-width:1000px) { .game-list { grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; } }
+  @media(max-width:700px) { .game-list { grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; } }
+  @media(max-width:440px) { .game-list { grid-template-columns:minmax(0,1fr); max-width:340px; } }
+  @media(prefers-reduced-motion:reduce) { .game-card { transition:none; } }
 </style>
