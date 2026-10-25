@@ -1,4 +1,5 @@
 ---
+import { seoPages, seoLocales } from '../data/seo';
 import BaekguComic from './BaekguComic.astro';
 import JinjinGames from './JinjinGames.astro';
 import JinjinCatch from './JinjinCatch.astro';
@@ -26,22 +27,43 @@ const historyUrl = `${home}history/`;
 const gamesUrl = `${home}games/`;
 const pageSuffix = historyPage ? 'history/' : catchPage ? 'games/catch/' : gamesPage ? 'games/' : '';
 const pagePath = `${home}${pageSuffix}`;
-const pageTitle = historyPage ? t.nav[0] : catchPage ? catchContent[lang].title : gamesPage ? gamesContent[lang].title : t.title;
-const pageDescription = catchPage ? catchContent[lang].intro : gamesPage ? gamesContent[lang].intro : t.description;
+const pageKind = historyPage ? 'history' : catchPage ? 'catch' : gamesPage ? 'games' : 'home';
+const [pageTitle, pageDescription] = seoPages[lang][pageKind];
 const canonical = new URL(pagePath, Astro.site);
+const siteHome = new URL(`${base}/en/`, Astro.site).href;
+const image = new URL(`${base}/images/${gamesPage || catchPage ? 'jinjin-yard-painted.png' : 'returned-baekgu.png'}`, Astro.site).href;
+const alternateLinks = Object.keys(languages).flatMap(code => [code, seoLocales[code as Language].region].map(hreflang => ({ hreflang, href:new URL(`${base}/${code}/${pageSuffix}`, Astro.site).href })));
+const structuredData = {
+ '@context':'https://schema.org',
+ '@graph':[
+  { '@type':'WebSite', '@id':`${siteHome}#website`, url:siteHome, name:'JINDO OF KOREA', inLanguage:['en-US','ja-JP','ko-KR'] },
+  { '@type':gamesPage ? 'CollectionPage' : 'WebPage', '@id':`${canonical}#webpage`, url:canonical.href, name:pageTitle, description:pageDescription, inLanguage:seoLocales[lang].region, isPartOf:{ '@id':`${siteHome}#website` }, primaryImageOfPage:{ '@type':'ImageObject', url:image } },
+  ...(catchPage ? [{ '@type':'VideoGame', name:catchContent[lang].title, description:pageDescription, url:canonical.href, inLanguage:seoLocales[lang].region, gamePlatform:'Web browser', playMode:'SinglePlayer', isAccessibleForFree:true }] : [])
+ ]
+};
 ---
 <!doctype html>
 <html lang={lang}>
   <head>
     <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{pageTitle} — Jindo of Korea</title><meta name="description" content={pageDescription} />
+    <title>{pageTitle}</title><meta name="description" content={pageDescription} />
     <meta name="theme-color" content="#f4f0e7" /><link rel="icon" href={`${base}/favicon-64.png`} type="image/png" sizes="64x64" /><link rel="apple-touch-icon" href={`${base}/apple-touch-icon.png`} />
     <link rel="canonical" href={canonical} />
-    {Object.keys(languages).map(code => <link rel="alternate" hreflang={code} href={new URL(`${base}/${code}/${pageSuffix}`, Astro.site)} />)}
+    {alternateLinks.map(link => <link rel="alternate" hreflang={link.hreflang} href={link.href} />)}
     <link rel="alternate" hreflang="x-default" href={new URL(`${base}/en/${pageSuffix}`, Astro.site)} />
-    <meta property="og:title" content={`${pageTitle} — Jindo of Korea`} /><meta property="og:description" content={pageDescription} />
+    <meta property="og:title" content={pageTitle} /><meta property="og:description" content={pageDescription} />
     <meta property="og:type" content="website" /><meta property="og:url" content={canonical} />
-    <meta property="og:image" content={new URL(`${base}/images/returned-baekgu.png`, Astro.site)} />
+    <meta property="og:image" content={image} />
+    <meta name="robots" content="index,follow,max-image-preview:large" />
+    <meta property="og:site_name" content="JINDO OF KOREA" />
+    <meta property="og:locale" content={seoLocales[lang].og} />
+    {Object.keys(languages).filter(code => code !== lang).map(code => <meta property="og:locale:alternate" content={seoLocales[code as Language].og} />)}
+    <meta property="og:image:alt" content={gamesPage || catchPage ? catchContent[lang].field : ui.photoAlt} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:image" content={image} />
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData).replace(/</g, '\u003c')} />
   </head>
   <body id="top" class:list={{ "history-page": historyPage, "games-page": gamesPage || catchPage }}>
     <a class="skip" href="#main">{t.skip}</a>
