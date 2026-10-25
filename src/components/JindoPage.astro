@@ -64,6 +64,16 @@ const structuredData = {
     <meta name="twitter:description" content={pageDescription} />
     <meta name="twitter:image" content={image} />
     <script type="application/ld+json" set:html={JSON.stringify(structuredData).replace(/</g, '\u003c')} />
+    {import.meta.env.PROD && <>
+      <!-- Google Analytics 4 -->
+      <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-RWTBZD6DCQ"></script>
+      <script is:inline>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){window.dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-RWTBZD6DCQ');
+      </script>
+    </>}
   </head>
   <body id="top" class:list={{ "history-page": historyPage, "games-page": gamesPage || catchPage }}>
     <a class="skip" href="#main">{t.skip}</a>
