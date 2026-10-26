@@ -61,12 +61,12 @@ test('multipliers apply after five and ten catches',()=>{
   assert.equal(game.state().score,total);assert.equal(game.state().combo,i+1);now+=221;
  });
 });
-test('other dogs cost 50 and reset combo; missing Jinjin resets combo, missing other dogs does not',()=>{
+test('other dogs cost 50 and reset combo; missing any dog preserves combo',()=>{
  for(const decoy of [false,true]){
   let calls=0;const game=createCatchGame(()=>(++calls===4&&decoy?.6:0));
   game.start(0);game.tick(400);game.hit(0,401);game.tick(621);
   assert.equal(first(game).kind,decoy?'gold':'jinjin');
-  game.tick(1821);assert.equal(game.state().combo,decoy?1:0);
+  game.tick(1821);assert.equal(game.state().combo,1);
  }
  let calls=0;const game=createCatchGame(()=>(++calls===4?.8:0));
  game.start(0);game.tick(400);game.hit(0,401);game.tick(621);
@@ -111,4 +111,43 @@ test('active and retiring appearances never overlap, even under rapid clicking',
   assert.equal(new Set(occupied.map(t=>t.index)).size,occupied.length);
   for(const t of s.targets)game.hit(t.index,now);
  }
+});
+
+test('the first catch is followed by a new visible target without stopping the round',()=>{
+ const game=createCatchGame(()=>0);game.start(0);
+ const initial=first(game);assert.ok(initial);
+ game.hit(initial.index,10);
+ assert.equal(game.state().targets.length,0);
+ const followup=game.tick(130);
+ assert.equal(followup.phase,'playing');
+ assert.equal(followup.targets.length,1);
+ assert.notEqual(followup.targets[0].index,initial.index);
+ assert.equal(followup.remaining,29870);
+ game.tick(6000);assert.ok(game.state().targets.length>0);
+});
+
+test('missing targets preserves an earned multiplier and the next Jinjin bonus',()=>{
+ const game=createCatchGame(()=>0);game.start(0);let now=0;
+ for(let i=0;i<5;i++) {game.tick(now);game.hit(first(game).index,now+1);now+=221;}
+ assert.equal(game.state().multiplier,1.5);
+ game.tick(now);game.tick(now+1300);
+ assert.equal(game.state().combo,5);assert.equal(game.state().multiplier,1.5);
+ game.tick(now+1500);const target=first(game);assert.ok(target);
+ game.hit(target.index,now+1501);assert.equal(game.state().score,650);
+ game.tick(30000);assert.equal(game.state().combo,6);
+});
+
+test('round results count catches by kind, empty taps and missed Jinjin exactly once',()=>{
+ const game=createCatchGame(()=>0);game.start(0);
+ const firstTarget=first(game);game.hit(firstTarget.index,1);game.hit(8,2);
+ assert.equal(game.state().stats.caught.jinjin,1);assert.equal(game.state().stats.empty,1);
+ game.tick(121);game.tick(1321);assert.equal(game.state().stats.missed,1);
+ game.tick(1322);assert.equal(game.state().stats.missed,1);
+ game.tick(1501);game.tick(30000);const missed=game.state().stats.missed;
+ game.tick(31000);assert.equal(game.state().stats.missed,missed);
+ const snapshot=game.state();snapshot.stats.caught.jinjin=999;
+ assert.equal(game.state().stats.caught.jinjin,1);
+ game.start(32000);assert.deepEqual(game.state().stats,{caught:{jinjin:0,white:0,gold:0,black:0},missed:0,empty:0});
+ const wrong=createCatchGame(()=>.9);wrong.start(0);const dog=first(wrong);
+ wrong.hit(dog.index,1);assert.equal(wrong.state().stats.caught[dog.kind],1);assert.equal(wrong.state().score,-50);
 });

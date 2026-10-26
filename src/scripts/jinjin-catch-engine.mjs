@@ -11,13 +11,15 @@ export const LEVELS = Object.freeze([
 ].map(Object.freeze));
 
 export function createCatchGame(random = Math.random) {
-  let phase = 'idle', score = 0, remaining = 30000, combo = 0, level = 1;
+  let phase = 'idle', score = 0, remaining = 30000, combo = 0, level = 1, maxCombo = 0;
   let deadline = 0, next = 0, last = -1, serial = 0, pausedAt = 0;
   let targets = [], retiring = [];
+  const freshStats = () => ({ caught:{jinjin:0,white:0,gold:0,black:0}, missed:0, empty:0 });
+  let stats = freshStats();
   let director = createSpawnDirector(random);
   let availableAfter = Array(9).fill(0);
   const multiplier = () => combo >= 10 ? 2 : combo >= 5 ? 1.5 : 1;
-  const state = () => ({ phase, score, remaining, level, combo, multiplier:multiplier(),
+  const state = () => ({ phase, score, remaining, level, combo, maxCombo, multiplier:multiplier(), stats:{ ...stats, caught:{ ...stats.caught } },
     targets:phase === 'playing' ? targets.map(target => ({ ...target })) : [],
     retiring:phase === 'playing' ? retiring.map(target => ({ ...target })) : [] });
   function retire(target, now) {
@@ -28,7 +30,7 @@ export function createCatchGame(random = Math.random) {
     if (phase !== 'playing') return state();
     remaining = Math.max(0, deadline - now);
     if (!remaining) {
-      if (targets.some(target => target.kind === 'jinjin')) combo = 0;
+      stats.missed += targets.filter(target => target.kind === 'jinjin').length;
       targets = []; retiring = []; phase = 'ended'; return state();
     }
     const nextLevel = Math.min(6, Math.floor((30000 - remaining) / 5000) + 1);
@@ -36,7 +38,7 @@ export function createCatchGame(random = Math.random) {
     retiring = retiring.filter(target => now < target.exitUntil);
     targets = targets.filter(target => {
       if (now < target.until) return true;
-      if (target.kind === 'jinjin') combo = 0;
+      if (target.kind === 'jinjin') stats.missed++;
       retire(target, now);
       return false;
     });
@@ -59,20 +61,22 @@ export function createCatchGame(random = Math.random) {
   return {
     state, tick,
     start(now) {
-      phase = 'playing'; score = 0; combo = 0; level = 1; remaining = 30000;
+      phase = 'playing'; score = 0; combo = 0; level = 1; maxCombo = 0; remaining = 30000; stats = freshStats();
       deadline = now + remaining; targets = []; retiring = []; director = createSpawnDirector(random); availableAfter = Array(9).fill(0); last = -1; next = now; serial = 0;
       return tick(now);
     },
     hit(index, now) {
+      const wasPlaying = phase === 'playing';
       const visibleId = targets.find(target => target.index === index)?.id;
       tick(now);
       const target = targets.find(target => target.id === visibleId);
-      if (phase !== 'playing' || !target) return false;
-      if (target.kind === 'jinjin') { score += 100 * multiplier(); combo++; }
+      if (phase !== 'playing' || !target) { if (wasPlaying && phase === 'playing' && visibleId === undefined) stats.empty++; return false; }
+      stats.caught[target.kind]++;
+      if (target.kind === 'jinjin') { score += 100 * multiplier(); combo++; maxCombo = Math.max(maxCombo,combo); }
       else { score -= 50; combo = 0; }
       targets = targets.filter(item => item.id !== target.id);
       retire(target, now);
-      if (level === 1) next = Math.min(next, now + 220);
+      if (level === 1) next = Math.min(next, now + 120);
       return true;
     },
     pause(now) {

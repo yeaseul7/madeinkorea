@@ -8,11 +8,11 @@ const { base } = Astro.props;
  <span class="jar-sprite jar-front"></span>
 </span>
 <style>
-.pot-art { position:absolute; inset:0 3%; display:block; pointer-events:none; }
-.jar-sprite { position:absolute; left:0; bottom:0; width:100%; height:70%; background-image:var(--pot-props); background-size:200% 200%; background-position:0 0; background-repeat:no-repeat; }
-.jar-back { z-index:0; }.jar-front { z-index:2; clip-path:inset(35% 0 0 0); }
-.dog-window { position:absolute; left:10%; right:10%; top:0; bottom:46%; overflow:hidden; z-index:1; }
-.pot-dog { display:block; position:absolute; width:100%; height:100%; left:0; bottom:-7%; transform:translateY(108%); transition:transform 140ms ease-out; }
+.pot-art { position:absolute; left:50%; bottom:0; height:100%; width:auto; aspect-ratio:1; transform:translateX(-50%); display:block; pointer-events:none; }
+.jar-sprite { position:absolute; left:12.5%; bottom:0; width:75%; height:75%; background-image:var(--pot-props); background-size:200% 200%; background-position:0 0; background-repeat:no-repeat; }
+.jar-back { z-index:0; }.jar-front { z-index:2; clip-path:inset(38% 0 0 0); }
+.dog-window { position:absolute; left:27%; width:46%; height:46%; bottom:44%; overflow:hidden; z-index:1; }
+.pot-dog { display:block; position:absolute; width:100%; height:100%; left:0; bottom:0; transform:translateY(108%); transition:transform 140ms ease-out; }
 :global(.is-up) .pot-dog { transform:translateY(0); }
 .character-sprite { background-image:var(--pot-characters); background-size:200% 200%; background-position:0 0; background-repeat:no-repeat; }
 :global([data-kind="white"]) .character-sprite { background-position:100% 0; }
